@@ -14,3 +14,8 @@ portatili (hostname, locazione)
 tickets (idTicket, descrizione)
 aule (nAula)
 box (codBox)
+
+Un prof può aggiungere, visualizzare e modificare
+solo i propri ticket. Un tecnico può vedere tutti i
+ticket, aggiungere, modificare, eliminare i propri
+ticket e in più si prende in carico uno o più ticket.
