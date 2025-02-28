@@ -1,1 +1,3 @@
-Test
+1. Creazione database (e popolamento tabelle)
+2. Creazione index
+3. Creazione eventuali pagine html/php
