@@ -1,3 +1,16 @@
 1. Creazione database (e popolamento tabelle)
 2. Creazione index
 3. Creazione eventuali pagine html/php
+
+Database:
+
+pc hanno tutti un nome. sono in aula o carello/box,
+lim ha classe e poi seguito da nome
+
+pc: L247-W10STAT-7-162
+utenti (id, mail, password, autorizzato)
+fissi (hostname, locazione)
+portatili (hostname, locazione)
+tickets (idTicket, descrizione)
+aule (nAula)
+box (codBox)
