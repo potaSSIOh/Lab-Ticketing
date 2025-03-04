@@ -25,7 +25,7 @@ if ($log == 1) {
     $_SESSION["username"] = $row["Username"];
     $ref = $_SERVER["referer"] ?? "";
     if ($ref == "asd")
-        header('Location: index.php');
+        header('Location: home.php');
     else
         header('Location: ' . $ref);
 } else {	
@@ -33,7 +33,7 @@ if ($log == 1) {
     $message = "Utente o password errati";
     echo "<script>
         alert('$message');
-        window.location.href = 'index.php';
+        window.location.href = 'index.html';
     </script>";
 }
 
