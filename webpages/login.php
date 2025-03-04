@@ -5,14 +5,14 @@ session_start();
 $_SESSION["username"] = $_POST["username"] ?? "";
 $_SESSION["password"] = $_POST["password"] ?? "";
 try {
-    $query = "select * from utenti where Username = :user";
+    $query = "select * from utenti where name_mail = :user";
     $stmt = $con->prepare($query);
     $stmt->bindParam(':user', $_SESSION["username"], PDO::PARAM_STR);
     $stmt->execute();
     $num = $stmt->rowCount();
     if ($num > 0) {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($_SESSION["password"] == $row["Password"]) {
+        if ($_SESSION["password"] == $row["password"]) {
             $log = 1;
         }
     }
@@ -23,7 +23,7 @@ try {
 
 if ($log == 1) {
     // Set session variables
-    $_SESSION["username"] = $row["Username"];
+    $_SESSION["username"] = $row["name_mail"];
     $ref = $_SERVER["referer"] ?? "";
     if ($ref == "asd")
         header('Location: home.php');
@@ -38,15 +38,4 @@ if ($log == 1) {
     </script>";
 }
 
-    try {
-        $query = "SELECT * from post";
-        $stmt = $con->prepare( $query );	// $con  
-        
-        $stmt->execute();
-        //Lettura numero righe risultato 
-        $num = $stmt->rowCount();
-} catch(PDOException $ex) {
-        print("Errore !".$ex->getMessage());
-        exit;
-}
     ?>
