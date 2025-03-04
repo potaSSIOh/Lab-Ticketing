@@ -1,4 +1,5 @@
 <?php
+include 'libs/connection.php';
 session_start();
 
 $_SESSION["username"] = $_POST["username"] ?? "";
