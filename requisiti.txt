@@ -1,0 +1,56 @@
+1. Introduzione
+
+1.1 Scopo del Progetto
+L'obiettivo del progetto è sviluppare un'applicazione web per la gestione delle segnalazioni (ticket) relative ai computer della scuola. 
+Il sistema consentirà agli utenti di inviare richieste di assistenza e agli amministratori di gestire e risolvere i problemi segnalati.
+
+1.2 Contesto
+Attualmente, la gestione delle segnalazioni avviene manualmente, rendendo difficile il monitoraggio e la risoluzione dei problemi. L'applicazione digitalizzerà questo processo per renderlo più efficiente.
+
+1.3 Stakeholder
+- ilBoss: può aggiungere gli utenti e creare / modificare i ticket
+- utenti: possono creare e modificare i propri ticket
+- utentiAutorizzati: possono creare / modificare i proti ticket e assegnarsi a quelli attivi per gestirli
+
+2. Descrizione Generale
+
+2.1 Funzionalità principali
+- Creazione e invio di ticket con descrizione del problema
+- Visualizzazione dello stato del ticket (Aperto, In lavorazione, Chiuso)
+- Assegnazione dei ticket agli utentiAutorizzati
+- Archivio storico delle segnalazioni
+
+2.2 Vincoli
+- L'applicazione sarà sviluppata in PHP e HTML
+- Comunicazione con il database mediante JSON
+
+3. Requisiti Funzionali
+
+- login per utenti
+- Invio ticket con dettagli del problema e selezione del computer interessato
+- Gestione ticket: modifica stato, aggiunta note, assegnazione utenteAutorizzato
+- Filtraggio e ricerca dei ticket per stato, data o computer
+- Esportazione dati in formato JSON
+
+4. Requisiti Non Funzionali
+
+- Prestazioni: il sistema deve rispondere rapidamente alle richieste
+- Sicurezza: protezione dei dati degli utenti e autenticazione sicura
+- Usabilità: interfaccia intuitiva e accessibile
+
+5. Requisiti Tecnici
+
+- Backend: PHP
+- Frontend: HTML, CSS, JavaScript
+- Database: MySQL
+- Comunicazione dati: JSON per lo scambio con il database
+
+6. Criteri di Accettazione
+
+- L'utente può creare un ticket
+- L'utenteAutorizzato può modificare e chiudere i ticket
+
+7. Allegati e Riferimenti
+
+- Diagrammi delle entità del database
+
