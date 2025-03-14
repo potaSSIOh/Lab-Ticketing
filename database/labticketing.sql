@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS `ticket` (
   `hostnameF` varchar(40) NOT NULL,
   `hostnameP` varchar(40) NOT NULL,
   `tecnico` int(11) DEFAULT NULL,
+  `stato` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`IdTicket`),
   KEY `creatore` (`creatore`),
   KEY `hostnameF` (`hostnameF`),
@@ -81,7 +82,8 @@ CREATE TABLE IF NOT EXISTS `ticket` (
   CONSTRAINT `ticket_ibfk_1` FOREIGN KEY (`creatore`) REFERENCES `utenti` (`id`),
   CONSTRAINT `ticket_ibfk_2` FOREIGN KEY (`hostnameF`) REFERENCES `fissi` (`HostName`),
   CONSTRAINT `ticket_ibfk_3` FOREIGN KEY (`hostnameP`) REFERENCES `portatili` (`hostname`),
-  CONSTRAINT `ticket_ibfk_4` FOREIGN KEY (`tecnico`) REFERENCES `utenti` (`id`)
+  CONSTRAINT `ticket_ibfk_4` FOREIGN KEY (`tecnico`) REFERENCES `utenti` (`id`),
+  CONSTRAINT `check_stato` CHECK (`stato` in ('In lavorazione','Chiuso','Aperto'))
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Dump dei dati della tabella labticketing.ticket: ~0 rows (circa)
