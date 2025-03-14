@@ -1,4 +1,4 @@
-<?php
+<?php 
 include 'libs/connection.php';
 session_start();
 
@@ -25,7 +25,7 @@ if ($log == 1) {
     // Set session variables
     $_SESSION["username"] = $row["name_mail"];
     $ref = $_SERVER["referer"] ?? "";
-    if ($ref == "asd")
+    if ($ref == "")
         header('Location: home.php');
     else
         header('Location: ' . $ref);
