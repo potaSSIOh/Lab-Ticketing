@@ -8,7 +8,7 @@ if ($user == "") {
 }
 
 session_start();
-include 'libs/connect.php';
+include 'libs/connection.php';
 
 try {
     // Query per ottenere i dati dalla tabella aule
