@@ -1,6 +1,6 @@
 <?php
-$user = $_POST["username"] ?? "";
-$pass = $_POST["password"] ?? "";
+$user = $_SESSION["username"] ?? "";
+$pass = $_SESSION["password"] ?? "";
 
 if ($user == "") {
     header('Location: index.html');
@@ -12,7 +12,7 @@ include 'libs/connection.php';
 
 try {
     // Query per ottenere i dati dalla tabella aule
-    $queryAule = "SELECT nAula, Lab FROM aule";
+    $queryAule = "SELECT nAula FROM aule";
     $stmtAule = $con->prepare($queryAule);
     $stmtAule->execute();
     $aule = $stmtAule->fetchAll(PDO::FETCH_ASSOC);
