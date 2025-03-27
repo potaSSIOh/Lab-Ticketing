@@ -1,4 +1,4 @@
-/* General Styles */
+/* General Styles*/ 
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -22,10 +22,65 @@ button {
     border: none;
     padding: 10px;
     border-radius: 5px;
-    cursor: pointer;
+    cursor: pointer; 
     transition: background 0.3s ease;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #003b4b;
 }
+
+/*Light Mode*/
+        body {
+            --bg: rgba(255, 255, 255, 0.2);
+            --text-color: black;
+            background-color: var(--bg);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Dark Mode */
+        .dark-mode {
+            --bg: #1e2a38; 
+            --text-color: #e0e0e0;
+        }
+
+        .theme {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .theme__toggle {
+            width: 60px;
+            height: 30px;
+            background-color: hsl(48, 90%, 85%);
+            border-radius: 25px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .theme__toggle:before {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background-color: hsl(48, 90%, 55%);
+            border-radius: 50%;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .theme__toggle.checked {
+            background-color: hsl(198, 90%, 25%);
+        }
+
+        .theme__toggle.checked:before {
+            background-color: hsl(198, 90%, 65%);
+            transform: translateX(30px);
+        }
