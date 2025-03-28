@@ -50,57 +50,106 @@
             border-color: #007bff;
         }
     </style>
-
 </head>
 
 <body>
 
     <h1>Welcome</h1>
 
-    <!-- Dropdowns for selecting options -->
     <div class="dropdown-container">
-        <!-- Dropdown for Aule -->
+        
+        <!-- Dropdown per le Aule -->
         <div>
             <h4>Aule</h4>
+            <?php
+            $url = 'localhost:5000/aule';
+            // inizializzazione della sessione curl
+            $ch = curl_init($url);
+
+            // opzioni curl
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            // eseguo il curl
+            $response = curl_exec($ch);
+
+            // Check degli errori
+            if (curl_errno($ch)) {
+                echo 'Error:' . curl_error($ch);
+            } else {
+                //Trasformo il json in un array PHP
+                $data = json_decode($response, true);
+            }
+
+            // Chiudo la sessione
+            curl_close($ch);
+            ?>
+            <!-- Popolo i dropdown in base ai dati ricavati dal Json-->
             <select name="Aule" id="AuleList" onchange="handleAuleChange()">
                 <option value="">Select Aule</option>
-                <option value="Aule1">247</option>
-                <option value="Aule2">Aule 2</option>
-                <option value="Aule3">Aule 3</option>
+                <?php
+                foreach ($data as $element) {
+                    echo "<option value='" . $element['nAula'] . "'>" . $element['nAula'] . "</option>";
+                }
+                ?>
             </select>
         </div>
 
-        <!-- Dropdown for Box -->
+        <!-- Dropdown per i Box -->
         <div>
             <h4>Box</h4>
-            <select name="SecondSelect" id="SecondSelect" onchange="handleBoxChange()">
+            <?php
+            $url = 'localhost:5000/box';
+            // inizializzo la sessione
+            $ch = curl_init($url);
+
+            // Imposto le opzioni
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            // Eseguo
+            $response = curl_exec($ch);
+
+            // Check degli errori
+            if (curl_errno($ch)) {
+                echo 'Error:' . curl_error($ch);
+            } else {
+                // Trasformo json in array PHP
+                $data = json_decode($response, true);
+            }
+
+            // Chiudo la sessione
+            curl_close($ch);
+            ?>
+            <!-- Popolo i dropdown in base ai dati ricavati dal Json-->
+            <select name="Box" id="BoxList" onchange="handleBoxChange()">
                 <option value="">Select Box</option>
-                <option value="Box1">Box 1</option>
-                <option value="Box2">Box 2</option>
-                <option value="Box3">Box 3</option>
+                <?php
+                foreach ($data as $element) {
+                    echo "<option value='" . $element['codBox'] . "'>" . $element['codBox'] . "</option>";
+                }
+                ?>
             </select>
         </div>
+
     </div>
 
     <script>
-        // Function to handle change in "Aule" dropdown
+        // Funzione per salvare in sessione il valore dentro al dropdown delle aule
         function handleAuleChange() {
             var auleDropdown = document.getElementById('AuleList');
 
-            // Get the selected option element
+            // Metto il valore nella variabile
             var selectedOption = auleDropdown.options[auleDropdown.selectedIndex];
 
-            // Get the text content of the selected option (not the value)
+            // Inserisco il contenuto in una variabile
             var selectedAuleContent = selectedOption.textContent || selectedOption.innerText;
 
-            // Check if something is selected
+            // Controllo se ho selezionato una riga del dropdown
             if (selectedAuleContent) {
-                // Send the selected content to the server using AJAX
+                // Uso AJAX per mandare il valore al file PHP che si occupa delle sessioni
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', 'saveAuleToSession.php', true);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-                // Send the selected content to the server
                 xhr.send('selectedAule=' + encodeURIComponent(selectedAuleContent));
 
                 xhr.onload = function () {
@@ -113,16 +162,32 @@
             }
         }
 
-        // Function to handle change in "Box" dropdown (empty for now, can be customized)
+        // Funzione per salvare in sessione il valore dentro al dropdown dei box
         function handleBoxChange() {
-            var boxDropdown = document.getElementById('SecondSelect');
-            var selectedBox = boxDropdown.value; // Get the selected value
+            var boxDropdown = document.getElementById('BoxList');
+            var selectedOption = boxDropdown.options[boxDropdown.selectedIndex];
 
-            if (selectedBox) {
-                // Handle the box selection logic here
-                console.log('Selected Box: ' + selectedBox);
-            }
+            // Inserisco il contenuto in una variabile
+            var selectedBoxContent = selectedOption.textContent || selectedOption.innerText;
+
+// Controllo se ho selezionato una riga del dropdown
+            if (selectedBoxContent) {
+    // Uso AJAX per mandare il valore al file PHP che si occupa delle sessioni
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'saveBoxToSession.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                xhr.send('selectedAule=' + encodeURIComponent(selectedBoxContent));
+
+                xhr.onload = function () {
+                    if (xhr.status == 200) {
+                        console.log('Session variable $_SESSION["codBox"] has been set to: ' + selectedBoxContent);
+            } else {
+                console.error('Error in saving session variable');
         }
+    };
+}
+}
     </script>
 
 </body>
