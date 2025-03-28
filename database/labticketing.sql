@@ -28,7 +28,11 @@ CREATE TABLE IF NOT EXISTS `aule` (
   PRIMARY KEY (`nAula`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dump dei dati della tabella labticketing.aule: ~0 rows (circa)
+-- Dump dei dati della tabella labticketing.aule: ~3 rows (circa)
+REPLACE INTO `aule` (`nAula`, `Lab`) VALUES
+	(147, 1),
+	(247, 1),
+	(347, 1);
 
 -- Dump della struttura di tabella labticketing.box
 DROP TABLE IF EXISTS `box`;
@@ -49,7 +53,15 @@ CREATE TABLE IF NOT EXISTS `fissi` (
   CONSTRAINT `fissi_ibfk_1` FOREIGN KEY (`Aula`) REFERENCES `aule` (`nAula`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dump dei dati della tabella labticketing.fissi: ~0 rows (circa)
+-- Dump dei dati della tabella labticketing.fissi: ~7 rows (circa)
+REPLACE INTO `fissi` (`HostName`, `Aula`) VALUES
+	('W10STAT-7-157', 247),
+	('W10STAT-7-159', 247),
+	('W10STAT-7-160', 247),
+	('W10STAT-7-161', 247),
+	('W10STAT-7-162', 247),
+	('W10STAT-7-163', 247),
+	('W10STAT-7-164', 247);
 
 -- Dump della struttura di tabella labticketing.portatili
 DROP TABLE IF EXISTS `portatili`;
