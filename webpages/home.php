@@ -53,6 +53,36 @@
 </head>
 
 <body>
+    
+<label class="theme">
+        <div id="themeToggle" class="theme__toggle"></div>
+    </label>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggle = document.getElementById("themeToggle");
+            const body = document.body;
+
+            // Controlla se c'è un tema salvato nel localStorage
+            if (localStorage.getItem("theme") === "dark") {
+                body.classList.add("dark-mode");
+                toggle.classList.add("checked");
+            }
+
+            toggle.addEventListener("click", function () {
+                if (body.classList.contains("dark-mode")) {
+                    body.classList.remove("dark-mode");
+                    toggle.classList.remove("checked");
+                    localStorage.setItem("theme", "light");
+                } else {
+                    body.classList.add("dark-mode");
+                    toggle.classList.add("checked");
+                    localStorage.setItem("theme", "dark");
+                }
+            });
+        });
+    </script>
+
 
     <h1>Welcome</h1>
 
@@ -84,7 +114,7 @@
             curl_close($ch);
             ?>
             <!-- Popolo i dropdown in base ai dati ricavati dal Json-->
-            <select name="Aule" id="AuleList" onchange="handleAuleChange()">
+            <select name="Aule" id="AuleList" onchange="handleAuleChange($data)">
                 <option value="">Select Aule</option>
                 <?php
                 foreach ($data as $element) {
@@ -120,7 +150,7 @@
             curl_close($ch);
             ?>
             <!-- Popolo i dropdown in base ai dati ricavati dal Json-->
-            <select name="Box" id="BoxList" onchange="handleBoxChange()">
+            <select name="Box" id="BoxList" onchange="handleBoxChange($data)">
                 <option value="">Select Box</option>
                 <?php
                 foreach ($data as $element) {
@@ -134,7 +164,7 @@
 
     <script>
         // Funzione per salvare in sessione il valore dentro al dropdown delle aule
-        function handleAuleChange() {
+        function handleAuleChange($data) {
             var auleDropdown = document.getElementById('AuleList');
 
             // Metto il valore nella variabile
@@ -163,7 +193,7 @@
         }
 
         // Funzione per salvare in sessione il valore dentro al dropdown dei box
-        function handleBoxChange() {
+        function handleBoxChange($data) {
             var boxDropdown = document.getElementById('BoxList');
             var selectedOption = boxDropdown.options[boxDropdown.selectedIndex];
 
@@ -189,7 +219,43 @@
 }
 }
     </script>
+    <?php
 
+function generateTable($data) {
+    if (empty($data)) {
+        return; // Do not display anything if the array is empty
+    }
+    
+    echo "<table border='1' cellpadding='5' cellspacing='0'>";
+    echo "<tr>";
+    
+    // Table headers (assuming array keys as column names)
+    foreach (array_keys($data[0]) as $key) {
+        echo "<th>" . htmlspecialchars($key) . "</th>";
+    }
+    echo "</tr>";
+    
+    // Table rows
+    foreach ($data as $row) {
+        echo "<tr>";
+        foreach ($row as $cell) {
+            echo "<td>" . htmlspecialchars($cell) . "</td>";
+        }
+        echo "</tr>";
+    }
+    
+    echo "</table>";
+}
+
+// Example data array
+$data = [
+    ["Name" => "Alice", "Age" => 25, "City" => "New York"],
+    ["Name" => "Bob", "Age" => 30, "City" => "Los Angeles"],
+    ["Name" => "Charlie", "Age" => 35, "City" => "Chicago"]
+];
+
+generateTable($data);
+?>
 </body>
 
 </html>
