@@ -7,7 +7,7 @@ app = Flask(__name__)
 @app.route('/',methods=['GET'])
 def hello():
     return "hello"
-
+#adsfasdf
 @app.route('/aule',methods=['GET']) 
 def aule():
     cursor = db.cursor() 
