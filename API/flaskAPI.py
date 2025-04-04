@@ -34,21 +34,24 @@ def utenti():
     results = cursor.fetchall() 
     return jsonify(results),200
 
-@app.route('/fissi/<int:Aula>',methods=['GET']) 
-def fissi():
-    cursor = db.cursor() 
-    sql = "SELECT * FROM fissi where Aula=%s" 
-    cursor.execute(sql, (Aula)) 
-    results = cursor.fetchone() 
-    if results==None:
-        return jsonify({"Error":"risorsa non trovata"}),404
+@app.route('/fissi/<int:Aula>', methods=['GET']) 
+def fissi(Aula): 
+    cursor = db.cursor()
+    sql = "SELECT * FROM fissi WHERE Aula = %s"
+    cursor.execute(sql, (Aula,))
+    result = cursor.fetchone()
+
+    if result is None:
+        return jsonify({"Error": "risorsa non trovata"}), 404
     else:
-        return jsonify(results),200
+        return jsonify(result), 200
+
 
 
 @app.route('/portatili/<string:codBox>',methods=['GET']) 
 def portatili():
     cursor = db.cursor() 
+    codBox = "%s"
     sql = "SELECT * FROM portatili where codBox=%s" 
     cursor.execute(sql, (codBox)) 
     results = cursor.fetchone() 
