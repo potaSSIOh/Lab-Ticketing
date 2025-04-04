@@ -4,6 +4,8 @@ import pymysql
 db = pymysql.connect(host="127.0.0.1", user="root", password="", database="labticketing",autocommit=True, cursorclass=pymysql.cursors.DictCursor)
 app = Flask(__name__)
 
+# GET method
+
 @app.route('/',methods=['GET'])
 def hello():
     return "hello"
@@ -32,21 +34,28 @@ def utenti():
     results = cursor.fetchall() 
     return jsonify(results),200
 
-@app.route('/fissi',methods=['GET']) 
+@app.route('/fissi/<int:Aula>',methods=['GET']) 
 def fissi():
     cursor = db.cursor() 
-    sql = "SELECT * FROM fissi" 
-    cursor.execute(sql) 
-    results = cursor.fetchall() 
-    return jsonify(results),200
+    sql = "SELECT * FROM fissi where Aula=%s" 
+    cursor.execute(sql, (Aula)) 
+    results = cursor.fetchone() 
+    if results==None:
+        return jsonify({"Error":"risorsa non trovata"}),404
+    else:
+        return jsonify(results),200
 
-@app.route('/portatili',methods=['GET']) 
+
+@app.route('/portatili/<string:codBox>',methods=['GET']) 
 def portatili():
     cursor = db.cursor() 
-    sql = "SELECT * FROM portatili" 
-    cursor.execute(sql) 
-    results = cursor.fetchall() 
-    return jsonify(results),200
+    sql = "SELECT * FROM portatili where codBox=%s" 
+    cursor.execute(sql, (codBox)) 
+    results = cursor.fetchone() 
+    if results==None:
+        return jsonify({"Error":"risorsa non trovata"}),404
+    else:
+        return jsonify(results),200
 
 @app.route('/ticket',methods=['GET']) 
 def ticket():
@@ -55,5 +64,7 @@ def ticket():
     cursor.execute(sql) 
     results = cursor.fetchall() 
     return jsonify(results),200
+
+
 
 app.run()
