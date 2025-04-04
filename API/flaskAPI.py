@@ -1,9 +1,10 @@
 #REMEMBER TO IMPORT FLASK AND PYMYSQL IN THE MACHINE
 from flask import Flask,jsonify,request,make_response 
-import pymysql 
+import pymysql
+from flask_cors import CORS 
 db = pymysql.connect(host="127.0.0.1", user="root", password="", database="labticketing",autocommit=True, cursorclass=pymysql.cursors.DictCursor)
 app = Flask(__name__)
-
+CORS(app)
 # GET methods
 
 @app.route('/',methods=['GET'])
