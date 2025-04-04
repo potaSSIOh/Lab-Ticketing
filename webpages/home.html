@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="styles/style.css">
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column; /* Stack elements vertically */
+            align-items: center; /* Center elements */
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .dropdown-container {
+            display: flex;
+            justify-content: space-between; /* Space out the dropdowns */
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+
+        h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+
+<body>
+    <label class="theme">
+        <div id="themeToggle" class="theme__toggle"></div>
+    </label>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggle = document.getElementById("themeToggle");
+            const body = document.body;
+
+            // Controlla se c'è un tema salvato nel localStorage
+            if (localStorage.getItem("theme") === "dark") {
+                body.classList.add("dark-mode");
+                toggle.classList.add("checked");
+            }
+
+            toggle.addEventListener("click", function () {
+                if (body.classList.contains("dark-mode")) {
+                    body.classList.remove("dark-mode");
+                    toggle.classList.remove("checked");
+                    localStorage.setItem("theme", "light");
+                } else {
+                    body.classList.add("dark-mode");
+                    toggle.classList.add("checked");
+                    localStorage.setItem("theme", "dark");
+                }
+            });
+        });
+    </script>
+
+    <h1>Welcome</h1>
+
+    <div class="dropdown-container">
+        <!-- Dropdown per le Aule -->
+        <div>
+            <h4>Aule</h4>
+            <select name="Aule" id="AuleList" onchange="handleAuleChange()">
+                <option value="">Select Aule</option>
+                <!-- Le opzioni verranno aggiunte dinamicamente -->
+            </select>
+        </div>
+
+        <!-- Dropdown per i Box -->
+        <div>
+            <h4>Box</h4>
+            <select name="Box" id="BoxList" onchange="handleBoxChange()">
+                <option value="">Select Box</option>
+                <!-- Le opzioni verranno aggiunte dinamicamente -->
+            </select>
+        </div>
+    </div>
+
+    <script>
+        // Funzione per caricare le aule tramite AJAX
+        function loadAuleData() {
+            fetch('http://localhost:5000/aule')
+                .then(response => response.json())
+                .then(data => {
+                    const auleList = document.getElementById('AuleList');
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.nAula;
+                        option.textContent = item.nAula;
+                        auleList.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error loading Aule:', error));
+        }
+
+        // Funzione per caricare i box tramite AJAX
+        function loadBoxData() {
+            fetch('http://localhost:5000/box')
+                .then(response => response.json())
+                .then(data => {
+                    const boxList = document.getElementById('BoxList');
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.codBox;
+                        option.textContent = item.codBox;
+                        boxList.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error loading Box:', error));
+        }
+
+        // Funzione per gestire il cambiamento nel dropdown delle Aule
+        function handleAuleChange() {
+            const selectedAule = document.getElementById('AuleList').value;
+            if (selectedAule) {
+                fetch('saveAuleToSession.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `selectedAule=${encodeURIComponent(selectedAule)}`
+                })
+                .then(response => response.text())
+                .then(data => console.log('Aule saved:', data))
+                .catch(error => console.error('Error saving Aule:', error));
+            }
+        }
+
+        // Funzione per gestire il cambiamento nel dropdown dei Box
+        function handleBoxChange() {
+            const selectedBox = document.getElementById('BoxList').value;
+            if (selectedBox) {
+                fetch('saveBoxToSession.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `selectedBox=${encodeURIComponent(selectedBox)}`
+                })
+                .then(response => response.text())
+                .then(data => console.log('Box saved:', data))
+                .catch(error => console.error('Error saving Box:', error));
+            }
+        }
+
+        // Carica i dati iniziali per le Aule e i Box
+        loadAuleData();
+        loadBoxData();
+    </script>
+</body>
+
+</html>
