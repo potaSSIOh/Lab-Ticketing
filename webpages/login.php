@@ -26,7 +26,7 @@ if ($log == 1) {
     $_SESSION["username"] = $row["name_mail"];
     $ref = $_SERVER["referer"] ?? "";
     if ($ref == "")
-        header('Location: home.php');
+        header('Location: home.html');
     else
         header('Location: ' . $ref);
 } else {	
