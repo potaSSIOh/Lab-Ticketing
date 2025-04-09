@@ -30,6 +30,7 @@ def add_fisso():
 
     cursor = db.cursor()
     cursor.execute("INSERT INTO fissi (HostName, Aula) VALUES (%s, %s)", (HostName, Aula))
+    db.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "risorsa non inserita"}), 403)

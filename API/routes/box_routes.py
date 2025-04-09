@@ -22,6 +22,7 @@ def add_box():
     cursor = db.cursor()
     sql = "INSERT INTO box (codBox) VALUES (%s)"
     cursor.execute(sql, (codBox,))
+    db.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "risorsa non inserita"}), 403)

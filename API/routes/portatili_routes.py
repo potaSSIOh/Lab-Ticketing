@@ -3,6 +3,8 @@ from db import db
 
 portatili_routes = Blueprint('portatili_routes', __name__)
 
+#-----------------------------------------------------
+
 @portatili_routes.route('/portatili', methods=['GET'])
 @portatili_routes.route('/portatili/<string:codBox>', methods=['GET'])
 def get_portatili(codBox=None):
@@ -30,6 +32,7 @@ def add_portatile():
 
     cursor = db.cursor()
     cursor.execute("INSERT INTO portatili (HostName, codBox) VALUES (%s, %s)", (HostName, codBox))
+    db.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "risorsa non inserita"}), 403)

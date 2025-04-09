@@ -29,6 +29,7 @@ def add_ticket():
     sql = """INSERT INTO ticket (descrizione, dataOra, creatore, hostnameF, hostnameP, tecnico, stato)
              VALUES (%s, %s, %s, %s, %s, %s, %s)"""
     cursor.execute(sql, (descrizione, dataOra, creatore, hostnameF, hostnameP, tecnico, stato))
+    db.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "risorsa non inserita"}), 403)

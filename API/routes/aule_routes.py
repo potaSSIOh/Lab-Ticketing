@@ -23,6 +23,7 @@ def add_aula():
     cursor = db.cursor()
     sql = "INSERT INTO aule (nAula, Lab) VALUES (%s, %s)"
     cursor.execute(sql, (nAula, Lab))
+    db.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "risorsa non inserita"}), 403)

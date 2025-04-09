@@ -26,6 +26,7 @@ def add_utente():
     cursor = db.cursor()
     cursor.execute("INSERT INTO utenti (name_mail, password, autorizzato) VALUES (%s, %s, %s)",
                    (name_mail, password, autorizzato))
+    db.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "risorsa non inserita"}), 403)
