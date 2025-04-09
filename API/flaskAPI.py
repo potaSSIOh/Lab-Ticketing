@@ -105,9 +105,9 @@ def addTicket():
         descrizione = data["descrizione"]
         dataOra = data["dataOra"]
         creatore = data["creatore"]
-        hostnameF = data["hostnameF"]
-        hostnameP = data["hostnameP"]
-        tecnico = data["tecnico"]
+        hostnameF = data["hostnameF"] if "hostnameF" in data else None
+        hostnameP = data["hostnameP"] if "hostnameP" in data else None
+        tecnico = data["tecnico"] if "tecnico" in data else None
         stato = data["stato"]
     except KeyError as e:
         return make_response(jsonify({"Error": f"Campo mancante: {str(e)}"}), 400)
@@ -188,7 +188,7 @@ def addBox():
         return make_response(jsonify({"Error": f"Campo mancante: {str(e)}"}), 400)
     cursor = db.cursor() 
     sql = "insert into box (codBox) values (%s)" 
-    cursor.execute(sql, (codBox)) 
+    cursor.execute(sql, (codBox,)) 
     if cursor.rowcount==0: 
         res=make_response(jsonify({"Error":"risorsa non inserita"}),403) 
     else: 
