@@ -138,18 +138,21 @@
 
         // Funzione per gestire il cambiamento nel dropdown delle Aule
         function handleAuleChange() {
-            const selectedAule = document.getElementById('AuleList').value;
-            if (selectedAule) {
+            const selectedAula = document.getElementById('AuleList').value;
+            if (selectedAula) {
                 fetch('saveAuleToSession.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
-                    body: `selectedAule=${encodeURIComponent(selectedAule)}`
+                    body: `selectedBox=${encodeURIComponent(selectedAula)}`
                 })
                 .then(response => response.text())
-                .then(data => console.log('Aule saved:', data))
-                .catch(error => console.error('Error saving Aule:', error));
+                .then(data => {
+                    console.log('Aula saved:', data);
+                    loadAuleDetails(selectedAula); // nuova funzione per caricare e mostrare i dettagli
+                })
+                .catch(error => console.error('Error saving Aula:', error));
             }
         }
 
@@ -171,11 +174,72 @@
                 .catch(error => console.error('Error saving Box:', error));
             }
         }
-    
+        
+        function loadAuleDetails(aula) {
+
+            fetch(`http://localhost:5000/fissi/` + aula)
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('table-container');
+            container.innerHTML = ""; // Pulisce la tabella precedente
+            console.log(data.aula);
+            if (!data || Object.keys(data).length === 0) {
+                container.innerHTML = "<p>Nessun dato disponibile per quest'aula.</p>";
+                return;
+            }
+
+            const tableTitle = document.createElement("table");
+            tableTitle.style.borderCollapse = "collapse";
+            tableTitle.style.width = "100%";
+
+            const thead = document.createElement("thead");
+            const headerRow = document.createElement("tr");
+            const th = document.createElement("th");
+            th.textContent = "Hostnames";
+            th.style.padding = "10px";
+            headerRow.appendChild(th);
+            thead.appendChild(headerRow);
+            tableTitle.appendChild(thead);
+            container.appendChild(tableTitle);
+            
+            const table = document.createElement("table");
+            const tbody = document.createElement("tbody");
+            const dataRow = document.createElement("tr");
+            table.style.borderCollapse = "collapse";
+            table.style.width = "100%";
+
+            // Creazione delle righe della tabella con i dati
+            data.forEach(value => {
+                const td = document.createElement("td");
+                td.textContent =  value.HostName;
+                td.style.border = "1px solid #ccc";
+                td.style.padding = "20px";
+                
+                // Aggiungiamo un listener di click per ciascuna cella
+                td.addEventListener('click', () => {
+                    // Esegui un'azione quando la cella viene cliccata
+                    alert(`Hai cliccato sulla cella con valore: ` + td.textContent);
+                    // Puoi sostituire l'alert con qualsiasi altra azione
+                });
+                
+                dataRow.appendChild(td);
+            });
+
+            tbody.appendChild(dataRow);
+
+            table.appendChild(tbody);
+            container.appendChild(table);
+        })
+        .catch(error => {
+            console.error("Errore nel caricamento dettagli aule:", error);
+            document.getElementById('table-container').innerHTML = "<p>Errore nel caricamento dei dati.</p>";
+        });
+}
+        
         // 🔽 Funzione per ottenere i dettagli del box selezionato e generare la tabella
         function loadBoxDetails(codBox) { 
 
-    fetch(`http://localhost:5000/portatili/` + codBox)
+        fetch(`http://localhost:5000/portatili/` + codBox)
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById('table-container');
