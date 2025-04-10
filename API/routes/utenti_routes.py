@@ -53,3 +53,20 @@ def update_password(id):
         return make_response(jsonify({"Error": "Utente non trovato o password non modificata"}), 404)
 
     return make_response(jsonify({"Status": "Password aggiornata"}), 200)
+
+@utenti_routes.route('/utenti/<int:id>', methods=['PATCH'])
+def update_name_mail(id):
+    data = request.get_json()
+    try:
+        name_mail = data["name_mail"]
+    except KeyError:
+        return make_response(jsonify({"Error": "Campo 'password' mancante"}), 400)
+
+    cursor = db.cursor()
+    cursor.execute("UPDATE utenti SET name_mail = %s WHERE id = %s", (name_mail, id))
+    db.commit()
+
+    if cursor.rowcount == 0:
+        return make_response(jsonify({"Error": "Utente non trovato o password non modificata"}), 404)
+
+    return make_response(jsonify({"Status": "Password aggiornata"}), 200)
