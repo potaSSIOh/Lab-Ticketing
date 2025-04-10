@@ -1,20 +1,19 @@
 <!DOCTYPE HTML>
-
-<html>
+<html lang="it">
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/style.css">
-        <style>
+    <style>
         form {
-
             padding: 20px;
             border-radius: 10px;
             display: flex;
             flex-direction: column;
             width: 300px;
         }
-        body { 
+
+        body {
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
@@ -23,13 +22,29 @@
             height: 100vh;
             margin: 0;
         }
-        </style>
+
+        .forgotten-password-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            font-size: 0.85rem; /* Reduced the font size */
+            transition: background-color 0.3s ease;
+        }
+
+        .forgotten-password-btn:hover {
+            background-color: #003b4b;
+        }
+    </style>
     <meta charset="utf-8" />
     <title>LOGIN</title>
-
 </head>
-<body>
 
+<body>
     <label class="theme">
         <div id="themeToggle" class="theme__toggle"></div>
     </label>
@@ -61,17 +76,18 @@
 
     <h1>LOGIN</h1>
     <form action='login.php' method='post'>
-        Mail<input type='text' name='username' required><br>
-        Password <input type='password' name='password' required><br>
+        <label for="username">Mail</label>
+        <input type='text' id="username" name='username' required>
+        <br>
+        <label for="password">Password</label>
+        <input type='password' id="password" name='password' required>
+        <br>
         <button type='submit' name='loginButton'>Login</button>
     </form>
 
-    
+    <br><br>
 
+    <a href="forgottenPassword.html" class="forgotten-password-btn">Password dimenticata?</a>
 </body>
-
-    <br> <br>
-
-<a href="forgottenPassword.html">Password dimenticata?</a>
 
 </html>
