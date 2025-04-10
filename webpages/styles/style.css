@@ -25,6 +25,12 @@ button {
     cursor: pointer; 
     transition: background 0.3s ease;
 }
+td{
+    cursor: pointer;
+    
+}
+
+
 
 button:hover {
     background-color: #003b4b;
@@ -37,14 +43,30 @@ button:hover {
             background-color: var(--bg);
             color: var(--text-color);
             transition: background-color 0.3s, color 0.3s;
+            --bg-td: #e0e0e0a6;
+            --text-td: black;
+            --border-td: black;
         }
 
         /* Dark Mode */
         .dark-mode {
             --bg: #1e2a38; 
             --text-color: #e0e0e0;
+            --bg-td: #161f29;
+            --text-td: white;
+            --border-td: #ddd;
+        }
+        th{
+            color: red;
+            padding: 12px; /* Spaziatura interna per ogni cella */
         }
 
+        td{
+            background-color: var(--bg-td); 
+            color: var(--text-td);
+            padding: 12px; /* Spaziatura interna per ogni cella */
+            border: 10px solid var(--border-td); /* Bordo sottile e chiaro per ogni cella */
+        }
         .theme {
             display: flex;
             align-items: center;
