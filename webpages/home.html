@@ -14,7 +14,6 @@
             align-items: center; /* Center elements */
             padding: 20px;
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
         }
 
         h1 {
@@ -33,14 +32,13 @@
         h4 {
             margin-bottom: 10px;
             font-size: 18px;
-            color: #333;
+            color: #ff0000;
         }
 
         select {
             padding: 10px;
             font-size: 16px;
             width: 100%;
-            border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box;
         }
@@ -105,6 +103,7 @@
     </div>
     <div id="table-container" style="margin-top: 30px; width: 100%; max-width: 800px;"></div>
     <script>
+
         // Funzione per caricare le aule tramite AJAX
         function loadAuleData() {
             fetch('http://localhost:5000/aule')
@@ -174,58 +173,67 @@
         }
     
         // 🔽 Funzione per ottenere i dettagli del box selezionato e generare la tabella
-        function loadBoxDetails(codBox) {
-            fetch(`http://localhost:5000/portatili/` + codBox)
-                .then(response => response.json())
-                .then(data => {
-                    const container = document.getElementById('table-container');
-                    container.innerHTML = ""; // Pulisce la tabella precedente
-    
-                    if (!data || Object.keys(data).length === 0) {
-                        container.innerHTML = "<p>Nessun dato disponibile per questo box.</p>";
-                        return;
-                    }
-    
-                    const table = document.createElement("table");
-                    table.style.borderCollapse = "collapse";
-                    table.style.width = "100%";
-                    table.style.backgroundColor = "#fff";
-    
-                    const thead = document.createElement("thead");
-                    const headerRow = document.createElement("tr");
-    
-                    Object.keys(data).forEach(key => {
-                        const th = document.createElement("th");
-                        th.textContent = key;
-                        th.style.border = "1px solid #ccc";
-                        th.style.padding = "10px";
-                        th.style.backgroundColor = "#eee";
-                        headerRow.appendChild(th);
-                    });
-    
-                    thead.appendChild(headerRow);
-                    table.appendChild(thead);
-    
-                    const tbody = document.createElement("tbody");
-                    const dataRow = document.createElement("tr");
-    
-                    Object.values(data).forEach(value => {
-                        const td = document.createElement("td");
-                        td.textContent = value;
-                        td.style.border = "1px solid #ccc";
-                        td.style.padding = "10px";
-                        dataRow.appendChild(td);
-                    });
-    
-                    tbody.appendChild(dataRow);
-                    table.appendChild(tbody);
-                    container.appendChild(table);
-                })
-                .catch(error => {
-                    console.error("Errore nel caricamento dettagli box:", error);
-                    document.getElementById('table-container').innerHTML = "<p>Errore nel caricamento dei dati.</p>";
+        function loadBoxDetails(codBox) { 
+
+    fetch(`http://localhost:5000/portatili/` + codBox)
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('table-container');
+            container.innerHTML = ""; // Pulisce la tabella precedente
+            console.log(data.codBox);
+            if (!data || Object.keys(data).length === 0) {
+                container.innerHTML = "<p>Nessun dato disponibile per questo box.</p>";
+                return;
+            }
+
+            const tableTitle = document.createElement("table");
+            tableTitle.style.borderCollapse = "collapse";
+            tableTitle.style.width = "100%";
+
+            const thead = document.createElement("thead");
+            const headerRow = document.createElement("tr");
+            const th = document.createElement("th");
+            th.textContent = "Hostnames";
+            th.style.padding = "10px";
+            headerRow.appendChild(th);
+            thead.appendChild(headerRow);
+            tableTitle.appendChild(thead);
+            container.appendChild(tableTitle);
+            
+            const table = document.createElement("table");
+            const tbody = document.createElement("tbody");
+            const dataRow = document.createElement("tr");
+            table.style.borderCollapse = "collapse";
+            table.style.width = "100%";
+
+            // Creazione delle righe della tabella con i dati
+            data.forEach(value => {
+                const td = document.createElement("td");
+                td.textContent =  value.hostname[0];
+                td.style.border = "1px solid #ccc";
+                td.style.padding = "10px";
+                
+                // Aggiungiamo un listener di click per ciascuna cella
+                td.addEventListener('click', () => {
+                    // Esegui un'azione quando la cella viene cliccata
+                    alert(`Hai cliccato sulla cella con valore: ` + td.textContent);
+                    // Puoi sostituire l'alert con qualsiasi altra azione
                 });
-        }
+                
+                dataRow.appendChild(td);
+            });
+
+            tbody.appendChild(dataRow);
+
+            table.appendChild(tbody);
+            container.appendChild(table);
+        })
+        .catch(error => {
+            console.error("Errore nel caricamento dettagli box:", error);
+            document.getElementById('table-container').innerHTML = "<p>Errore nel caricamento dei dati.</p>";
+        });
+}
+
         
         // Carica i dati iniziali per le Aule e i Box
         loadAuleData();
