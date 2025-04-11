@@ -8,10 +8,27 @@
     <link rel="stylesheet" href="styles/style.css">
 
     <style>
+            #top-right-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        #top-right-button:hover {
+            background-color: #0056b3;
+        }
         body {
             display: flex;
-            flex-direction: column; /* Stack elements vertically */
-            align-items: center; /* Center elements */
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
             font-family: Arial, sans-serif;
         }
@@ -23,7 +40,7 @@
 
         .dropdown-container {
             display: flex;
-            justify-content: space-between; /* Space out the dropdowns */
+            justify-content: space-between;
             width: 100%;
             max-width: 800px;
             margin-top: 20px;
@@ -101,8 +118,13 @@
             </select>
         </div>
     </div>
+    <button id="top-right-button" onclick="LogOut()">Log Out</button>
     <div id="table-container" style="margin-top: 30px; width: 100%; max-width: 800px;"></div>
     <script>
+
+        function LogOut(){
+            window.location.replace("index.html");
+        }
 
         // Funzione per caricare le aule tramite AJAX
         function loadAuleData() {
@@ -117,7 +139,7 @@
                         auleList.appendChild(option);
                     });
                 })
-                .catch(error => console.error('Error loading Aule:', error));
+                .catch(error => container.innerHTML = "<p>Nessun dato disponibile per quest'aula.</p>");
         }
 
         // Funzione per caricare i box tramite AJAX
@@ -133,11 +155,12 @@
                         boxList.appendChild(option);
                     });
                 })
-                .catch(error => console.error('Error loading Box:', error));
-        }
+                .catch(error => container.innerHTML = "<p>Nessun dato disponibile per quest'aula.</p>");
+            }
 
         // Funzione per gestire il cambiamento nel dropdown delle Aule
         function handleAuleChange() {
+            document.getElementById('BoxList').value = "";
             const selectedAula = document.getElementById('AuleList').value;
             if (selectedAula) {
                 fetch('saveAuleToSession.php', {
@@ -149,14 +172,14 @@
                 })
                 .then(response => response.text())
                 .then(data => {
-                    console.log('Aula saved:', data);
                     loadAuleDetails(selectedAula); // nuova funzione per caricare e mostrare i dettagli
                 })
-                .catch(error => console.error('Error saving Aula:', error));
+                .catch(error => container.innerHTML = "<p>Nessun dato disponibile per quest'aula.</p>");
             }
         }
 
         function handleBoxChange() {
+            document.getElementById('AuleList').value = "";
             const selectedBox = document.getElementById('BoxList').value;
             if (selectedBox) {
                 fetch('saveBoxToSession.php', {
@@ -168,10 +191,10 @@
                 })
                 .then(response => response.text())
                 .then(data => {
-                    console.log('Box saved:', data);
+
                     loadBoxDetails(selectedBox); // nuova funzione per caricare e mostrare i dettagli
                 })
-                .catch(error => console.error('Error saving Box:', error));
+                .catch(error => container.innerHTML = "<p>Nessun dato disponibile per quest'aula.</p>");
             }
         }
         
@@ -182,7 +205,6 @@
         .then(data => {
             const container = document.getElementById('table-container');
             container.innerHTML = ""; // Pulisce la tabella precedente
-            console.log(data.aula);
             if (!data || Object.keys(data).length === 0) {
                 container.innerHTML = "<p>Nessun dato disponibile per quest'aula.</p>";
                 return;
@@ -231,8 +253,7 @@
             container.appendChild(table);
         })
         .catch(error => {
-            console.error("Errore nel caricamento dettagli aule:", error);
-            document.getElementById('table-container').innerHTML = "<p>Errore nel caricamento dei dati.</p>";
+            document.getElementById('table-container').innerHTML = "<p>Errore nel caricamento dei dati per L'aula</p>";
         });
 }
         
@@ -244,7 +265,6 @@
         .then(data => {
             const container = document.getElementById('table-container');
             container.innerHTML = ""; // Pulisce la tabella precedente
-            console.log(data.codBox);
             if (!data || Object.keys(data).length === 0) {
                 container.innerHTML = "<p>Nessun dato disponibile per questo box.</p>";
                 return;
@@ -273,7 +293,7 @@
             // Creazione delle righe della tabella con i dati
             data.forEach(value => {
                 const td = document.createElement("td");
-                td.textContent =  value.hostname[0];
+                td.textContent =  value.hostname;
                 td.style.border = "1px solid #ccc";
                 td.style.padding = "10px";
                 
@@ -293,8 +313,7 @@
             container.appendChild(table);
         })
         .catch(error => {
-            console.error("Errore nel caricamento dettagli box:", error);
-            document.getElementById('table-container').innerHTML = "<p>Errore nel caricamento dei dati.</p>";
+            document.getElementById('table-container').innerHTML = "<p>Errore nel caricamento dei dati per il Box.</p>";
         });
 }
 
