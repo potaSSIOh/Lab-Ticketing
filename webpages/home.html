@@ -126,38 +126,6 @@
             window.location.replace("index.html");
         }
 
-        // Funzione per caricare le aule tramite AJAX
-        function loadAuleData() {
-            fetch('http://localhost:5000/aule')
-                .then(response => response.json())
-                .then(data => {
-                    const auleList = document.getElementById('AuleList');
-                    data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.nAula;
-                        option.textContent = item.nAula;
-                        auleList.appendChild(option);
-                    });
-                })
-                .catch(error => container.innerHTML = "<p>Nessun dato disponibile per quest'aula.</p>");
-        }
-
-        // Funzione per caricare i box tramite AJAX
-        function loadBoxData() {
-            fetch('http://localhost:5000/box')
-                .then(response => response.json())
-                .then(data => {
-                    const boxList = document.getElementById('BoxList');
-                    data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.codBox;
-                        option.textContent = item.codBox;
-                        boxList.appendChild(option);
-                    });
-                })
-                .catch(error => container.innerHTML = "<p>Nessun dato disponibile per quest'aula.</p>");
-            }
-
         // Funzione per gestire il cambiamento nel dropdown delle Aule
         function handleAuleChange() {
             document.getElementById('BoxList').value = "";
@@ -257,7 +225,7 @@
         });
 }
         
-        // 🔽 Funzione per ottenere i dettagli del box selezionato e generare la tabella
+        // Funzione per ottenere i dettagli del box selezionato e generare la tabella
         function loadBoxDetails(codBox) { 
 
         fetch(`http://localhost:5000/portatili/` + codBox)
@@ -316,11 +284,39 @@
             document.getElementById('table-container').innerHTML = "<p>Errore nel caricamento dei dati per il Box.</p>";
         });
 }
+function fetchData(url, callback, columnName) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => callback(data, columnName))
+                .catch(error => {
+                    document.getElementById('table-container').innerHTML = `<p>Error loading data for ${columnName}.</p>`;
+                });
+        }
+function initializeData() {
+            // Carica le opzioni per aule e box
+            fetchData('http://localhost:5000/aule', (data) => {
+                const auleList = document.getElementById('AuleList');
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.nAula;
+                    option.textContent = item.nAula;
+                    auleList.appendChild(option);
+                });
+            }, "Aule");
 
+            fetchData('http://localhost:5000/box', (data) => {
+                const boxList = document.getElementById('BoxList');
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.codBox;
+                    option.textContent = item.codBox;
+                    boxList.appendChild(option);
+                });
+            }, "Box");
+        }
         
         // Carica i dati iniziali per le Aule e i Box
-        loadAuleData();
-        loadBoxData();
+        initializeData();
     </script>
 
 </body>
