@@ -265,11 +265,10 @@
                 td.style.border = "1px solid #ccc";
                 td.style.padding = "10px";
                 
-                // Aggiungiamo un listener di click per ciascuna cella
+                // listener di click per ciascuna cella
                 td.addEventListener('click', () => {
                     // Esegui un'azione quando la cella viene cliccata
                     alert(`Hai cliccato sulla cella con valore: ` + td.textContent);
-                    // Puoi sostituire l'alert con qualsiasi altra azione
                 });
                 
                 dataRow.appendChild(td);
