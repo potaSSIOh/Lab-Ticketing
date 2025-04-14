@@ -41,7 +41,8 @@ button:hover {
 
 /*Light Mode*/
         body {
-            --bg: rgba(255, 255, 255, 0.2);
+
+            --bg: rgb(241, 241, 241);
             --text-color: black;
             background-color: var(--bg);
             color: var(--text-color);
