@@ -7,7 +7,39 @@
     <title>Home</title>
     <link rel="stylesheet" href="styles/style.css">
 
-    <style>
+
+</head>
+
+<body>
+    <label class="theme">
+        <div id="themeToggle" class="theme__toggle"></div>
+    </label>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggle = document.getElementById("themeToggle");
+            const body = document.body;
+
+            // Controlla se c'è un tema salvato nel localStorage
+            if (localStorage.getItem("theme") === "dark") {
+                body.classList.add("dark-mode");
+                toggle.classList.add("checked");
+            }
+
+            toggle.addEventListener("click", function () {
+                if (body.classList.contains("dark-mode")) {
+                    body.classList.remove("dark-mode");
+                    toggle.classList.remove("checked");
+                    localStorage.setItem("theme", "light");
+                } else {
+                    body.classList.add("dark-mode");
+                    toggle.classList.add("checked");
+                    localStorage.setItem("theme", "dark");
+                }
+            });
+        });
+    </script>
+        <style>
             #top-right-button {
             position: fixed;
             top: 10px;
@@ -21,9 +53,15 @@
             cursor: pointer;
             z-index: 1000;
         }
+        
+    td:hover {
+        background-color: #e2e6ea;
+        color: #007bff;
+    }
+
 
         #top-right-button:hover {
-            background-color: #0056b3;
+            background-color: #0056b3; 
         }
         body {
             display: flex;
@@ -60,42 +98,7 @@
             box-sizing: border-box;
         }
 
-        select:focus {
-            outline: none;
-            border-color: #007bff;
-        }
     </style>
-</head>
-
-<body>
-    <label class="theme">
-        <div id="themeToggle" class="theme__toggle"></div>
-    </label>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const toggle = document.getElementById("themeToggle");
-            const body = document.body;
-
-            // Controlla se c'è un tema salvato nel localStorage
-            if (localStorage.getItem("theme") === "dark") {
-                body.classList.add("dark-mode");
-                toggle.classList.add("checked");
-            }
-
-            toggle.addEventListener("click", function () {
-                if (body.classList.contains("dark-mode")) {
-                    body.classList.remove("dark-mode");
-                    toggle.classList.remove("checked");
-                    localStorage.setItem("theme", "light");
-                } else {
-                    body.classList.add("dark-mode");
-                    toggle.classList.add("checked");
-                    localStorage.setItem("theme", "dark");
-                }
-            });
-        });
-    </script>
 
     <h1>Welcome</h1>
 
@@ -105,7 +108,6 @@
             <h4>Aule</h4>
             <select name="Aule" id="AuleList" onchange="handleAuleChange()">
                 <option value="">Select Aule</option>
-                <!-- Le opzioni verranno aggiunte dinamicamente -->
             </select>
         </div>
 
@@ -114,7 +116,6 @@
             <h4>Box</h4>
             <select name="Box" id="BoxList" onchange="handleBoxChange()">
                 <option value="">Select Box</option>
-                <!-- Le opzioni verranno aggiunte dinamicamente -->
             </select>
         </div>
     </div>
@@ -168,121 +169,149 @@
         
         function loadAuleDetails(aula) {
 
-            fetch(`http://localhost:5000/fissi/` + aula)
-        .then(response => response.json())
-        .then(data => {
-            const container = document.getElementById('table-container');
-            container.innerHTML = ""; // Pulisce la tabella precedente
-            if (!data || Object.keys(data).length === 0) {
-                container.innerHTML = "<p>Nessun dato disponibile per quest'aula.</p>";
-                return;
-            }
+fetch(`http://localhost:5000/fissi/` + aula)
+.then(response => response.json())
+.then(data => {
+    const container = document.getElementById('table-container');
+    container.innerHTML = ""; // Pulisce la tabella precedente
+    
+    if (!data || Object.keys(data).length === 0) {
+        container.innerHTML = "<p>Nessun dato disponibile per quest'aula.</p>";
+        return;
+    }
 
-            const tableTitle = document.createElement("table");
-            tableTitle.style.borderCollapse = "collapse";
-            tableTitle.style.width = "100%";
+    const tableTitle = document.createElement("table");
+    tableTitle.style.borderCollapse = "collapse";
+    tableTitle.style.width = "100%";
 
-            const thead = document.createElement("thead");
-            const headerRow = document.createElement("tr");
-            const th = document.createElement("th");
-            th.textContent = "Hostnames";
-            th.style.padding = "10px";
-            headerRow.appendChild(th);
-            thead.appendChild(headerRow);
-            tableTitle.appendChild(thead);
-            container.appendChild(tableTitle);
-            
-            const table = document.createElement("table");
-            const tbody = document.createElement("tbody");
-            const dataRow = document.createElement("tr");
-            table.style.borderCollapse = "collapse";
-            table.style.width = "100%";
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+    const th = document.createElement("th");
+    th.textContent = "Hostnames";
+    th.style.padding = "10px";
+    headerRow.appendChild(th);
+    thead.appendChild(headerRow);
+    tableTitle.appendChild(thead);
+    container.appendChild(tableTitle);
+    
+    const table = document.createElement("table");
+    const tbody = document.createElement("tbody");
+    table.style.borderCollapse = "collapse";
+    table.style.width = "100%";
 
-            // Creazione delle righe della tabella con i dati
-            data.forEach(value => {
-                const td = document.createElement("td");
-                td.textContent =  value.HostName;
-                td.style.border = "1px solid #ccc";
-                td.style.padding = "20px";
-                
-                // Aggiungiamo un listener di click per ciascuna cella
-                td.addEventListener('click', () => {
-                    // Esegui un'azione quando la cella viene cliccata
-                    alert(`Hai cliccato sulla cella con valore: ` + td.textContent);
-                    // Puoi sostituire l'alert con qualsiasi altra azione
-                });
-                
-                dataRow.appendChild(td);
-            });
+    let dataRow = document.createElement("tr");  // Iniziamo con una nuova riga
 
+    // Creazione delle righe della tabella con i dati
+    data.forEach((value, index) => {
+        const td = document.createElement("td");
+        td.textContent = value.HostName;
+        td.style.border = "1px solid #ccc";
+        td.style.padding = "20px";
+        
+        // listener di click per ciascuna cella
+        td.addEventListener('click', () => {
+            // Esegue un'azione quando la cella viene cliccata
+            alert(`Hai cliccato sulla cella con valore: ` + td.textContent);
+        });
+        
+        dataRow.appendChild(td);
+        
+        // Se sono stati aggiunti 7 elementi alla riga, aggiungiamo la riga alla tabella
+        if ((index + 1) % 7 === 0) {
             tbody.appendChild(dataRow);
-
             table.appendChild(tbody);
             container.appendChild(table);
-        })
-        .catch(error => {
-            document.getElementById('table-container').innerHTML = "<p>Errore nel caricamento dei dati per L'aula</p>";
-        });
+            
+            // Crea una nuova riga per i successivi 7 elementi
+            dataRow = document.createElement("tr");
+        }
+    });
+
+    // Se ci sono ancora elementi rimanenti (meno di 7), aggiungili alla tabella
+    if (dataRow.children.length > 0) {
+        tbody.appendChild(dataRow);
+        table.appendChild(tbody);
+        container.appendChild(table);
+    }
+})
+.catch(error => {
+    document.getElementById('table-container').innerHTML = "<p>Errore nel caricamento dei dati per l'Aula</p>";
+});
 }
-        
+
         // Funzione per ottenere i dettagli del box selezionato e generare la tabella
         function loadBoxDetails(codBox) { 
+    fetch(`http://localhost:5000/portatili/` + codBox)
+    .then(response => response.json())
+    .then(data => {
+        const container = document.getElementById('table-container');
+        container.innerHTML = ""; // Pulisce la tabella precedente
+        
+        if (!data || Object.keys(data).length === 0) {
+            container.innerHTML = "<p>Nessun dato disponibile per questo box.</p>";
+            return;
+        }
 
-        fetch(`http://localhost:5000/portatili/` + codBox)
-        .then(response => response.json())
-        .then(data => {
-            const container = document.getElementById('table-container');
-            container.innerHTML = ""; // Pulisce la tabella precedente
-            if (!data || Object.keys(data).length === 0) {
-                container.innerHTML = "<p>Nessun dato disponibile per questo box.</p>";
-                return;
-            }
+        const tableTitle = document.createElement("table");
+        tableTitle.style.borderCollapse = "collapse";
+        tableTitle.style.width = "100%";
 
-            const tableTitle = document.createElement("table");
-            tableTitle.style.borderCollapse = "collapse";
-            tableTitle.style.width = "100%";
+        const thead = document.createElement("thead");
+        const headerRow = document.createElement("tr");
+        const th = document.createElement("th");
+        th.textContent = "Hostnames";
+        th.style.padding = "10px";
+        headerRow.appendChild(th);
+        thead.appendChild(headerRow);
+        tableTitle.appendChild(thead);
+        container.appendChild(tableTitle);
+        
+        const table = document.createElement("table");
+        const tbody = document.createElement("tbody");
+        table.style.borderCollapse = "collapse";
+        table.style.width = "100%";
 
-            const thead = document.createElement("thead");
-            const headerRow = document.createElement("tr");
-            const th = document.createElement("th");
-            th.textContent = "Hostnames";
-            th.style.padding = "10px";
-            headerRow.appendChild(th);
-            thead.appendChild(headerRow);
-            tableTitle.appendChild(thead);
-            container.appendChild(tableTitle);
+        let dataRow = document.createElement("tr");  // Iniziamo con una nuova riga
+
+        // Creazione delle righe della tabella con i dati
+        data.forEach((value, index) => {
+            const td = document.createElement("td");
+            td.textContent = value.hostname;
+            td.style.border = "1px solid #ccc";
+            td.style.padding = "10px";
             
-            const table = document.createElement("table");
-            const tbody = document.createElement("tbody");
-            const dataRow = document.createElement("tr");
-            table.style.borderCollapse = "collapse";
-            table.style.width = "100%";
-
-            // Creazione delle righe della tabella con i dati
-            data.forEach(value => {
-                const td = document.createElement("td");
-                td.textContent =  value.hostname;
-                td.style.border = "1px solid #ccc";
-                td.style.padding = "10px";
-                
-                // listener di click per ciascuna cella
-                td.addEventListener('click', () => {
-                    // Esegui un'azione quando la cella viene cliccata
-                    alert(`Hai cliccato sulla cella con valore: ` + td.textContent);
-                });
-                
-                dataRow.appendChild(td);
+            // listener di click per ciascuna cella
+            td.addEventListener('click', () => {
+                // Esegue un'azione quando la cella viene cliccata
+                alert(`Hai cliccato sulla cella con valore: ` + td.textContent);
             });
+            
+            dataRow.appendChild(td);
+            
+            // Se sono stati aggiunti 7 elementi alla riga, aggiungiamo la riga alla tabella
+            if ((index + 1) % 7 === 0) {
+                tbody.appendChild(dataRow);
+                table.appendChild(tbody);
+                container.appendChild(table);
+                
+                // Crea una nuova riga per i successivi 7 elementi
+                dataRow = document.createElement("tr");
+            }
+        });
 
+        // Se ci sono ancora elementi rimanenti (meno di 7), aggiungili alla tabella
+        if (dataRow.children.length > 0) {
             tbody.appendChild(dataRow);
-
             table.appendChild(tbody);
             container.appendChild(table);
-        })
-        .catch(error => {
-            document.getElementById('table-container').innerHTML = "<p>Errore nel caricamento dei dati per il Box.</p>";
-        });
+        }
+    })
+    .catch(error => {
+        document.getElementById('table-container').innerHTML = "<p>Errore nel caricamento dei dati per il Box.</p>";
+    });
 }
+
+
 function fetchData(url, callback, columnName) {
             fetch(url)
                 .then(response => response.json())

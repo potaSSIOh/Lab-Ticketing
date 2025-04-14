@@ -4,7 +4,41 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/style.css">
-    <style>
+
+    <meta charset="utf-8" />
+    <title>LOGIN</title>
+</head>
+
+<body>
+    <label class="theme">
+        <div id="themeToggle" class="theme__toggle"></div>
+    </label>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggle = document.getElementById("themeToggle");
+            const body = document.body;
+
+            // Controlla se c'è un tema salvato nel localStorage
+            if (localStorage.getItem("theme") === "dark") {
+                body.classList.add("dark-mode");
+                toggle.classList.add("checked");
+            }
+
+            toggle.addEventListener("click", function () {
+                if (body.classList.contains("dark-mode")) {
+                    body.classList.remove("dark-mode");
+                    toggle.classList.remove("checked");
+                    localStorage.setItem("theme", "light");
+                } else {
+                    body.classList.add("dark-mode");
+                    toggle.classList.add("checked");
+                    localStorage.setItem("theme", "dark");
+                }
+            });
+        });
+    </script>
+        <style>
             #marconi_logo {
             position: fixed;
             top: 6px;
@@ -50,39 +84,6 @@
             background-color: #003b4b;
         }
     </style>
-    <meta charset="utf-8" />
-    <title>LOGIN</title>
-</head>
-
-<body>
-    <label class="theme">
-        <div id="themeToggle" class="theme__toggle"></div>
-    </label>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const toggle = document.getElementById("themeToggle");
-            const body = document.body;
-
-            // Controlla se c'è un tema salvato nel localStorage
-            if (localStorage.getItem("theme") === "dark") {
-                body.classList.add("dark-mode");
-                toggle.classList.add("checked");
-            }
-
-            toggle.addEventListener("click", function () {
-                if (body.classList.contains("dark-mode")) {
-                    body.classList.remove("dark-mode");
-                    toggle.classList.remove("checked");
-                    localStorage.setItem("theme", "light");
-                } else {
-                    body.classList.add("dark-mode");
-                    toggle.classList.add("checked");
-                    localStorage.setItem("theme", "dark");
-                }
-            });
-        });
-    </script>
     <a href="https://www.marconiverona.edu.it/" target="_blank"><img id="marconi_logo" src="images/marconi_logo.png"  alt="MarconiLogo"></a>
     <h1>LOGIN</h1>
     <form action='login.php' method='post'>
