@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <style>
+        #top-right-button {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 1000;
+    }
+    
+    td:hover {
+    background-color: #e2e6ea;
+    color: #007bff;
+    }
+
+
+    #top-right-button:hover {
+        background-color: #0056b3; 
+    }
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .dropdown-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 800px;
+        margin-top: 20px;
+    }
+
+    h4 {
+        margin-bottom: 10px;
+        font-size: 18px;
+        color: #ff0000;
+    }
+
+    select {
+        padding: 10px;
+        font-size: 16px;
+        width: 100%;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+</style>
+</head>
+
+<body>
+    <label class="theme">
+        <div id="themeToggle" class="theme__toggle"></div>
+    </label>
+
+    <h1>Welcome</h1>
+
+    <div class="dropdown-container">
+        <!-- Dropdown per le Aule -->
+        <div>
+            <h4>Aule</h4>
+            <select name="Aule" id="AuleList" onchange="handleChange('Aule')">
+                <option value="">Select Aule</option>
+            </select>
+        </div>
+
+        <!-- Dropdown per i Box -->
+        <div>
+            <h4>Box</h4>
+            <select name="Box" id="BoxList" onchange="handleChange('Box')">
+                <option value="">Select Box</option>
+            </select>
+        </div>
+    </div>
+
+    <button id="top-right-button" onclick="LogOut()">Log Out</button>
+    <div id="table-container" style="margin-top: 30px; width: 100%; max-width: 800px;"></div>
+
+    <script>
+        // gestione del tema
+        document.addEventListener("DOMContentLoaded", () => {
+            const toggle = document.getElementById("themeToggle");
+            const body = document.body;
+            const savedTheme = localStorage.getItem("theme");
+
+            if (savedTheme === "dark") {
+                body.classList.add("dark-mode");
+                toggle.classList.add("checked");
+            }
+
+            toggle.addEventListener("click", () => {
+                body.classList.toggle("dark-mode");
+                toggle.classList.toggle("checked");
+                localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+            });
+        });
+
+        function LogOut() {
+            window.location.replace("index.html");
+        }
+
+        // Funzione per gestire i cambi dei valori del dropdown (Aule/Box)
+        function handleChange(type) {
+            const listElement = type === 'Aule' ? document.getElementById('AuleList') : document.getElementById('BoxList');
+            const selectedValue = listElement.value;
+            
+            // Pulisco il contenuto del dropdown in caso di cambiamento del di quest ultimo
+            if (type === 'Aule') {
+                document.getElementById('BoxList').value = "";
+            } else {
+                document.getElementById('AuleList').value = "";
+            }
+
+            if (selectedValue) {
+                fetch(`save${type}ToSession.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `selected${type}=${encodeURIComponent(selectedValue)}`
+                })
+                .then(response => response.text())
+                .then(() => loadDetails(type, selectedValue))
+                .catch(() => document.getElementById('table-container').innerHTML = `<p>Nessun dato disponibile per il ${type} selezionato.</p>`);
+            }
+        }
+
+        // Carico i dati(Aule or Box)
+        async function loadDetails(type, value) {
+            const url = `http://localhost:5000/${type === 'Aule' ? 'fissi' : 'portatili'}/${value}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const container = document.getElementById('table-container');
+                container.innerHTML = ""; // Cancello il contenuto di prima
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<p>Nessun dato disponibile per il ${type} selezionato.</p>`;
+                    return;
+                }
+
+                // Struttura della tabella
+                const table = document.createElement("table");
+                table.style.borderCollapse = "collapse";
+                table.style.width = "100%";
+                const thead = document.createElement("thead");
+                const headerRow = document.createElement("tr");
+                const th = document.createElement("th");
+                th.textContent = "Hostnames";
+                th.style.padding = "10px";
+                headerRow.appendChild(th);
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                const tbody = document.createElement("tbody");
+                let dataRow = document.createElement("tr");
+
+                data.forEach((item, index) => {
+                    const td = document.createElement("td");
+                    td.textContent = item.HostName || item.hostname;
+                    td.style.border = "1px solid #ccc";
+                    td.style.padding = "10px";
+
+                    td.addEventListener('click', () => alert(`Hai cliccato sulla cella con valore: ${td.textContent}`));
+
+                    dataRow.appendChild(td);
+
+                    if ((index + 1) % 6 === 0) {
+                        tbody.appendChild(dataRow);
+                        dataRow = document.createElement("tr");
+                    }
+                });
+
+                if (dataRow.children.length > 0) tbody.appendChild(dataRow);
+
+                table.appendChild(tbody);
+                container.appendChild(table);
+            } catch (error) {
+                document.getElementById('table-container').innerHTML = `<p>Errore nel caricamento dei dati per ${type}.</p>`;
+            }
+        }
+
+        // Fetch dei dati per Aule e Box
+        function initializeData() {
+            const fetchData = async (url, listId) => {
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    const list = document.getElementById(listId);
+
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.nAula || item.codBox;
+                        option.textContent = item.nAula || item.codBox;
+                        list.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Error fetching initial data:', error);
+                }
+            };
+
+            fetchData('http://localhost:5000/aule', 'AuleList');
+            fetchData('http://localhost:5000/box', 'BoxList');
+        }
+
+        initializeData();
+    </script>
+</body>
+
+</html>
