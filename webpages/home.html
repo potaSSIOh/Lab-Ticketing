@@ -64,6 +64,46 @@
         border-radius: 5px;
         box-sizing: border-box;
     }
+        /* Stile della modale */
+        .modale {
+            display: none; 
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+          }
+      
+          .modale-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s;
+          }
+      
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+      
+          .close {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+          }
+      
+          .close:hover {
+            color: black;
+          }
 
 </style>
 </head>
@@ -95,7 +135,15 @@
 
     <button id="top-right-button" onclick="LogOut()">Log Out</button>
     <div id="table-container" style="margin-top: 30px; width: 100%; max-width: 800px;"></div>
+    <!-- Modale -->
+    <div id="miaModale" class="modale">
+        <div class="modale-content">
+        <span class="close">&times;</span>
+        <p id="testoModale"></p>
+        </div>
+    </div>
 
+  
     <script>
         // gestione del tema
         document.addEventListener("DOMContentLoaded", () => {
@@ -145,7 +193,7 @@
             }
         }
 
-        // Carico i dati(Aule or Box)
+        // Carico i dati(Aule o Box)
         async function loadDetails(type, value) {
             const url = `http://localhost:5000/${type === 'Aule' ? 'fissi' : 'portatili'}/${value}`;
             try {
@@ -174,6 +222,9 @@
 
                 const tbody = document.createElement("tbody");
                 let dataRow = document.createElement("tr");
+                const modale = document.getElementById('miaModale');
+                const testoModale = document.getElementById('testoModale');
+                const chiudi = document.querySelector('.close');
 
                 data.forEach((item, index) => {
                     const td = document.createElement("td");
@@ -181,7 +232,30 @@
                     td.style.border = "1px solid #ccc";
                     td.style.padding = "10px";
 
-                    td.addEventListener('click', () => alert(`Hai cliccato sulla cella con valore: ${td.textContent}`));
+                    //td.addEventListener('click', () => alert(`Hai cliccato sulla cella con valore: ${td.textContent}`));
+
+                    tbody.addEventListener('click', function(event) {
+                        let target = event.target;
+                        while (target && target.nodeName !== 'TR') {
+                          target = target.parentElement;
+                        }
+                        if (target) {
+                          const celle = target.getElementsByTagName('td');
+                          if (celle.length > 0) {
+                            let contenuto = '';
+                            for (let cella of celle) {
+                              contenuto += cella.innerText + ' ';
+                            }
+                            testoModale.innerText = 'Hai cliccato su: ' + td.textContent;
+                            modale.style.display = 'block';
+                          }
+                        }
+                      });
+                    
+                      // Per chiudere la modale
+                      chiudi.onclick = function() {
+                        modale.style.display = 'none';
+                      }
 
                     dataRow.appendChild(td);
 
@@ -197,6 +271,7 @@
                 container.appendChild(table);
             } catch (error) {
                 document.getElementById('table-container').innerHTML = `<p>Errore nel caricamento dei dati per ${type}.</p>`;
+                console.log(error);
             }
         }
 
@@ -204,7 +279,13 @@
         function initializeData() {
             const fetchData = async (url, listId) => {
                 try {
-                    const response = await fetch(url);
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        mode: 'cors',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        }
+                      });
                     const data = await response.json();
                     const list = document.getElementById(listId);
 
@@ -222,6 +303,7 @@
             fetchData('http://localhost:5000/aule', 'AuleList');
             fetchData('http://localhost:5000/box', 'BoxList');
         }
+
 
         initializeData();
     </script>
