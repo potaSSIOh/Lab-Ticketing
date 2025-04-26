@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify, make_response
-from flask_cors import CORS
+
 from db import db
 
 fissi_routes = Blueprint('fissi_routes', __name__)
-CORS(fissi_routes)
+
 @fissi_routes.route('/fissi', methods=['GET'])
 @fissi_routes.route('/fissi/<int:Aula>', methods=['GET'])
 def get_fissi(Aula=None):

@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify, make_response
-from flask_cors import CORS
+
 from db import db
 
 aule_routes = Blueprint('aule_routes', __name__)
-CORS(aule_routes)
+
 @aule_routes.route('/aule', methods=['GET'])
 def get_aule():
     cursor = db.cursor()
