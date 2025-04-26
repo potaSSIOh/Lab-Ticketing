@@ -1,8 +1,9 @@
 from flask import Blueprint, request, jsonify, make_response
+from flask_cors import CORS
 from db import db
 
 ticket_routes = Blueprint('ticket_routes', __name__)
-
+CORS(ticket_routes)
 @ticket_routes.route('/ticket', methods=['GET'])
 def get_tickets():
     cursor = db.cursor()

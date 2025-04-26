@@ -1,8 +1,9 @@
 from flask import Blueprint, request, jsonify, make_response
+from flask_cors import CORS
 from db import db
 
 portatili_routes = Blueprint('portatili_routes', __name__)
-
+CORS(portatili_routes)
 #-----------------------------------------------------
 
 @portatili_routes.route('/portatili', methods=['GET'])

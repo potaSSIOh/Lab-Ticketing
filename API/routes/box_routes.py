@@ -1,7 +1,11 @@
 from flask import Blueprint, request, jsonify, make_response
+from flask_cors import CORS
 from db import db
-
 box_routes = Blueprint('box_routes', __name__)
+CORS(box_routes)
+
+@box_routes.route('/box')
+
 
 @box_routes.route('/box', methods=['GET'])
 def get_box():
