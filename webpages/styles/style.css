@@ -110,3 +110,42 @@ button:hover {
             background-color: hsl(198, 90%, 65%);
             transform: translateX(30px);
         }
+        /* Stile della modale */
+        .modale {
+            display: none; 
+            position: fixed;
+
+            left: 0;
+            top: 0;
+            width: 600px;
+            height: 600px;
+          }
+      
+          .modale-content {
+            background-color: #fefefe;
+            color: black;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s;
+          }
+      
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+      
+          .close {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+          }
+      
+          .close:hover {
+            color: black;
+          }
