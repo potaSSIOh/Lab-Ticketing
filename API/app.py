@@ -31,8 +31,4 @@ app.register_blueprint(ticket_routes)
 app.register_blueprint(utenti_routes)
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-    
-=======
     app.run(port=5000, debug=True)
->>>>>>> visualizzatorePC
