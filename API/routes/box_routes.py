@@ -1,9 +1,14 @@
 from flask import Blueprint, request, jsonify, make_response
-from db import db
 
+from db import db
 box_routes = Blueprint('box_routes', __name__)
 
+
+@box_routes.route('/box')
+
+
 @box_routes.route('/box', methods=['GET'])
+
 def get_box():
     cursor = db.cursor()
     cursor.execute("SELECT * FROM box")

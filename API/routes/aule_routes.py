@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, make_response
+
 from db import db
 
 aule_routes = Blueprint('aule_routes', __name__)

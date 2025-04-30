@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, make_response
+
 from db import db
 
 utenti_routes = Blueprint('utenti_routes', __name__)

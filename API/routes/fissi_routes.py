@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, make_response
+
 from db import db
 
 fissi_routes = Blueprint('fissi_routes', __name__)
