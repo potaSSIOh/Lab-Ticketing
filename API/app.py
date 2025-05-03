@@ -6,7 +6,7 @@ from routes.fissi_routes import fissi_routes
 from routes.portatili_routes import portatili_routes
 from routes.ticket_routes import ticket_routes
 from routes.utenti_routes import utenti_routes
-from routes.password_routes import password_routes  # Added password_routes
+from routes.password_routes import password_routes
 
 app = Flask(__name__)
 CORS(app)
@@ -18,7 +18,7 @@ app.register_blueprint(fissi_routes)
 app.register_blueprint(portatili_routes)
 app.register_blueprint(ticket_routes)
 app.register_blueprint(utenti_routes)
-app.register_blueprint(password_routes)  # Registering password_routes
+app.register_blueprint(password_routes)
 
 if __name__ == '__main__':
     app.run(debug=True)
