@@ -64,6 +64,30 @@
         border-radius: 5px;
         box-sizing: border-box;
     }
+    .modal-forms-container {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .modal-forms-container form {
+        display: inline;
+    }
+
+    #btnInserisci, #btnVisualizza {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #btnInserisci:hover, #btnVisualizza:hover {
+        background-color: #0056b3;
+    }
 
 </style>
 </head>
@@ -95,16 +119,25 @@
 
     <button id="top-right-button" onclick="LogOut()">Log Out</button>
     <div id="table-container" style="margin-top: 30px; width: 100%; max-width: 800px;"></div>
-    <!-- Modale -->
-    <div id="miaModale" class="modale">
-        <div class="modale-content">
+<!-- Modale -->
+<div id="miaModale" class="modale">
+    <div class="modale-content">
         <span class="close">&times;</span>
         <h1>TICKET</h1>
         <p id="hostnameText"></p>
-        <button>Inserisci ticket</button>
+
+        <div class="modal-forms-container">
+            <!-- inserimento da controllare (chiamata funzione js)-->
+            <form action="" method="post">
+                <button id="btnInserisci">Inserisci ticket</button>
+            </form>
+
+            <form action="visualizzatoreTicket.html" target="_blank" method="post">
+                <button id="btnVisualizza">Visualizza Ticket</button>
+            </form>
         </div>
     </div>
-
+</div>
   
     <script>
         hostname = "";
@@ -127,7 +160,21 @@
         });
 
         function LogOut() {
-            window.location.replace("index.html");
+            fetch('logout.php', {
+                method: 'POST'
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.status === "success") {
+                  console.log("Session destroyed!");
+                  // Redirect or update the page
+                  window.location.href = "index.html"; 
+                }
+              })
+              .catch(error => {
+                console.error("Errore durante il logout:", error);
+              });
+            
         }
 
         // Funzione per gestire i cambi dei valori del dropdown (Aule/Box)
@@ -210,6 +257,7 @@
                 });
                 tbody.addEventListener('click', function(event) {
                         let target = event.target;
+                        hostname = event.target.textContent;
                         while (target && target.nodeName !== 'TR') {
                           target = target.parentElement;
                         }
@@ -222,7 +270,6 @@
                             }
                             const hostnameText = document.getElementById('hostnameText');
                             hostnameText.textContent = "Hostname PC :" + hostname;
-                            console.log(hostname);
                             modale.style.display = 'block';
                           }
                         }
