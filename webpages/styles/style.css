@@ -119,6 +119,7 @@ button:hover {
             top: 0;
             width: 600px;
             height: 600px;
+            overflow: auto;
           }
       
           .modale-content {

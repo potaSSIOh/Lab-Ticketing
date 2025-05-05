@@ -9,13 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="styles/style.css">
-
+    <h1 id="hostnameTitle" style="text-align: center;"></h1>
 </head>
 <body>
 
-</body>
+
 <script>
     hostname = "";
+    type = "";
     // gestione del tema
     document.addEventListener("DOMContentLoaded", () => {
         const toggle = document.getElementById("themeToggle");
@@ -33,6 +34,24 @@
             localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
         });
     });
+    fetch("get_pc.php")
+    .then(response => response.json())
+    .then(data => {
+        const hostname = data.Pc;
+        const type = data.Type;
+        console.log("Retrieved session value:", hostname);
+        
+        const hostnameTitle = document.getElementById('hostnameTitle');
+        hostnameTitle.textContent = hostname;
+        
+        console.log(type);
+    })
+    .catch(error => {
+        console.error("Error fetching session value:", error);
+    });
+
 </script>
+
+</body>
 </html>
 

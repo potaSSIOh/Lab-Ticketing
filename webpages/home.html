@@ -257,7 +257,31 @@
                 });
                 tbody.addEventListener('click', function(event) {
                         let target = event.target;
+
                         hostname = event.target.textContent;
+                        console.log(type);
+
+
+                        const formData = new URLSearchParams();
+                        formData.append("PcType", type);
+                        formData.append("selectedPc", hostname);
+
+                        fetch("savePcToSession.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: formData.toString()
+                                })
+                        .then(response => response.text())
+                        .then(HostnameSelected => {
+                        console.log("Server response:", HostnameSelected);
+                            });
+
+
+
+
+                        
                         while (target && target.nodeName !== 'TR') {
                           target = target.parentElement;
                         }
