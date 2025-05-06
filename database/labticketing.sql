@@ -16,10 +16,12 @@
 
 
 -- Dump della struttura del database labticketing
+DROP DATABASE IF EXISTS `labticketing`;
 CREATE DATABASE IF NOT EXISTS `labticketing` /*!40100 DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci */;
 USE `labticketing`;
 
 -- Dump della struttura di tabella labticketing.aule
+DROP TABLE IF EXISTS `aule`;
 CREATE TABLE IF NOT EXISTS `aule` (
   `nAula` int(3) NOT NULL,
   `Lab` tinyint(4) DEFAULT NULL,
@@ -29,6 +31,7 @@ CREATE TABLE IF NOT EXISTS `aule` (
 -- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella labticketing.box
+DROP TABLE IF EXISTS `box`;
 CREATE TABLE IF NOT EXISTS `box` (
   `codBox` varchar(30) NOT NULL,
   PRIMARY KEY (`codBox`)
@@ -37,6 +40,7 @@ CREATE TABLE IF NOT EXISTS `box` (
 -- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella labticketing.fissi
+DROP TABLE IF EXISTS `fissi`;
 CREATE TABLE IF NOT EXISTS `fissi` (
   `HostName` varchar(40) NOT NULL,
   `Aula` int(3) NOT NULL,
@@ -48,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `fissi` (
 -- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella labticketing.portatili
+DROP TABLE IF EXISTS `portatili`;
 CREATE TABLE IF NOT EXISTS `portatili` (
   `hostname` varchar(40) NOT NULL,
   `codBox` varchar(30) NOT NULL,
@@ -59,13 +64,14 @@ CREATE TABLE IF NOT EXISTS `portatili` (
 -- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella labticketing.ticket
+DROP TABLE IF EXISTS `ticket`;
 CREATE TABLE IF NOT EXISTS `ticket` (
-  `IdTicket` int(11) NOT NULL,
+  `IdTicket` int(11) NOT NULL AUTO_INCREMENT,
   `descrizione` varchar(50) NOT NULL,
   `dataOra` datetime NOT NULL DEFAULT current_timestamp(),
   `creatore` int(4) NOT NULL,
-  `hostnameF` varchar(40) NOT NULL,
-  `hostnameP` varchar(40) NOT NULL,
+  `hostnameF` varchar(40) DEFAULT NULL,
+  `hostnameP` varchar(40) DEFAULT NULL,
   `tecnico` int(11) DEFAULT NULL,
   `stato` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`IdTicket`),
@@ -78,11 +84,12 @@ CREATE TABLE IF NOT EXISTS `ticket` (
   CONSTRAINT `ticket_ibfk_3` FOREIGN KEY (`hostnameP`) REFERENCES `portatili` (`hostname`),
   CONSTRAINT `ticket_ibfk_4` FOREIGN KEY (`tecnico`) REFERENCES `utenti` (`id`),
   CONSTRAINT `check_stato` CHECK (`stato` in ('In lavorazione','Chiuso','Aperto'))
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella labticketing.utenti
+DROP TABLE IF EXISTS `utenti`;
 CREATE TABLE IF NOT EXISTS `utenti` (
   `id` int(4) NOT NULL AUTO_INCREMENT,
   `name_mail` varchar(50) NOT NULL,
