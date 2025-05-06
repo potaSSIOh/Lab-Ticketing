@@ -63,28 +63,46 @@ CREATE TABLE IF NOT EXISTS `portatili` (
 
 -- L’esportazione dei dati non era selezionata.
 
--- Dump della struttura di tabella labticketing.ticket
-DROP TABLE IF EXISTS `ticket`;
-CREATE TABLE IF NOT EXISTS `ticket` (
+-- Dump della struttura di tabella labticketing.ticketf
+DROP TABLE IF EXISTS `ticketf`;
+CREATE TABLE IF NOT EXISTS `ticketf` (
   `IdTicket` int(11) NOT NULL AUTO_INCREMENT,
   `descrizione` varchar(50) NOT NULL,
   `dataOra` datetime NOT NULL DEFAULT current_timestamp(),
   `creatore` int(4) NOT NULL,
   `hostnameF` varchar(40) DEFAULT NULL,
-  `hostnameP` varchar(40) DEFAULT NULL,
   `tecnico` int(11) DEFAULT NULL,
   `stato` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`IdTicket`),
   KEY `creatore` (`creatore`),
   KEY `hostnameF` (`hostnameF`),
-  KEY `hostnameP` (`hostnameP`),
   KEY `tecnico` (`tecnico`),
-  CONSTRAINT `ticket_ibfk_1` FOREIGN KEY (`creatore`) REFERENCES `utenti` (`id`),
-  CONSTRAINT `ticket_ibfk_2` FOREIGN KEY (`hostnameF`) REFERENCES `fissi` (`HostName`),
-  CONSTRAINT `ticket_ibfk_3` FOREIGN KEY (`hostnameP`) REFERENCES `portatili` (`hostname`),
-  CONSTRAINT `ticket_ibfk_4` FOREIGN KEY (`tecnico`) REFERENCES `utenti` (`id`),
+  CONSTRAINT `ticketf_ibfk_1` FOREIGN KEY (`creatore`) REFERENCES `utenti` (`id`),
+  CONSTRAINT `ticketf_ibfk_2` FOREIGN KEY (`hostnameF`) REFERENCES `fissi` (`HostName`),
+  CONSTRAINT `ticketf_ibfk_4` FOREIGN KEY (`tecnico`) REFERENCES `utenti` (`id`),
   CONSTRAINT `check_stato` CHECK (`stato` in ('In lavorazione','Chiuso','Aperto'))
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- L’esportazione dei dati non era selezionata.
+
+-- Dump della struttura di tabella labticketing.ticketp
+DROP TABLE IF EXISTS `ticketp`;
+CREATE TABLE IF NOT EXISTS `ticketp` (
+  `IdTicket` int(11) NOT NULL AUTO_INCREMENT,
+  `descrizione` varchar(50) NOT NULL,
+  `dataOra` datetime NOT NULL DEFAULT current_timestamp(),
+  `creatore` int(4) NOT NULL,
+  `hostnameP` varchar(40) DEFAULT NULL,
+  `tecnico` int(11) DEFAULT NULL,
+  `stato` varchar(14) DEFAULT NULL,
+  PRIMARY KEY (`IdTicket`) USING BTREE,
+  KEY `creatore` (`creatore`) USING BTREE,
+  KEY `hostnameP` (`hostnameP`) USING BTREE,
+  KEY `tecnico` (`tecnico`) USING BTREE,
+  CONSTRAINT `ticketp_ibfk_1` FOREIGN KEY (`creatore`) REFERENCES `utenti` (`id`),
+  CONSTRAINT `ticketp_ibfk_3` FOREIGN KEY (`hostnameP`) REFERENCES `portatili` (`hostname`),
+  CONSTRAINT `ticketp_ibfk_4` FOREIGN KEY (`tecnico`) REFERENCES `utenti` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
 
 -- L’esportazione dei dati non era selezionata.
 
