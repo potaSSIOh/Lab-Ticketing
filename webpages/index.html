@@ -3,6 +3,7 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Modifica il percorso per il CSS rimuovendo "/API" -->
     <link rel="stylesheet" href="styles/style.css">
 
     <meta charset="utf-8" />
@@ -38,16 +39,16 @@
             });
         });
     </script>
-        <style>
-            #marconi_logo {
+    
+    <style>
+        #marconi_logo {
             position: fixed;
             top: 6px;
             right: 6px;
             padding: 10px 20px;
             cursor: pointer;
-            width:180px;
-            height:150px;
-            
+            width: 180px;
+            height: 150px;
         }
         form {
             padding: 20px;
@@ -74,7 +75,7 @@
             padding: 10px;
             border-radius: 5px;
             cursor: pointer;
-             text-align: center;
+            text-align: center;
             text-decoration: none;
             font-size: 0.85rem; /* Reduced the font size */
             transition: background-color 0.3s ease;
@@ -84,16 +85,22 @@
             background-color: #003b4b;
         }
     </style>
-    <a href="https://www.marconiverona.edu.it/" target="_blank"><img id="marconi_logo" src="images/marconi_logo.png"  alt="MarconiLogo"></a>
+    
+    <!-- Modifica il percorso per l'immagine rimuovendo "/API" -->
+    <a href="https://www.marconiverona.edu.it/" target="_blank">
+        <img id="marconi_logo" src="images/marconi_logo.png" alt="MarconiLogo">
+    </a>
+    
     <h1>LOGIN</h1>
-    <form action='login.php' method='post'>
+    
+    <form action="login.php" method="post">
         <label for="username">Mail</label>
-        <input type='text' id="username" name='username' required>
+        <input type="text" id="username" name="username" required>
         <br>
         <label for="password">Password</label>
-        <input type='password' id="password" name='password' required>
+        <input type="password" id="password" name="password" required>
         <br>
-        <button type='submit' name='loginButton'>Login</button>
+        <button type="submit" name="loginButton">Login</button>
     </form>
 
     <br><br>
