@@ -20,6 +20,19 @@
         cursor: pointer;
         z-index: 1000;
     }
+    #bottom-button {
+            position: fixed;
+            top: 100px; /* Adjust to position below Log Out button */
+            right: 10px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 1000;
+        }
     
     td:hover {
     background-color: #e2e6ea;
@@ -118,6 +131,8 @@
     </div>
 
     <button id="top-right-button" onclick="LogOut()">Log Out</button>
+
+    <button id="bottom-button" onclick="CreateUser()">Crea Utente</button>
     <div id="table-container" style="margin-top: 30px; width: 100%; max-width: 800px;"></div>
 <!-- Modale -->
 <div id="miaModale" class="modale">
@@ -176,7 +191,10 @@
               });
             
         }
-
+        function CreateUser() {
+            window.location.href = "createUser.html;
+        }
+        
         // Funzione per gestire i cambi dei valori del dropdown (Aule/Box)
         function handleChange(type) {
             const listElement = type === 'Aule' ? document.getElementById('AuleList') : document.getElementById('BoxList');
