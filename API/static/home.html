@@ -155,6 +155,14 @@
 </div>
   
     <script>
+        // Verifica che l'utente sia loggato (token presente)
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+        // Se non c'è il token, manda alla pagina di login
+                window.location.href = "index.html";
+    }
+});
         hostname = "";
         // gestione del tema
         document.addEventListener("DOMContentLoaded", () => {
@@ -175,24 +183,14 @@
         });
 
         function LogOut() {
-            fetch('logout.php', {
-                method: 'POST'
-              })
-              .then(response => response.json())
-              .then(data => {
-                if (data.status === "success") {
-                  console.log("Session destroyed!");
-                  // Redirect or update the page
-                  window.location.href = "index.html"; 
-                }
-              })
-              .catch(error => {
-                console.error("Errore durante il logout:", error);
-              });
-            
+            // Rimuove il token JWT salvato localmente
+            localStorage.removeItem("token");
+        
+            // Reindirizza alla pagina di login
+            window.location.href = "index.html";
         }
         function CreateUser() {
-            window.location.href = "createUser.html;
+            window.location.href = "createUser.html";
         }
         
         // Funzione per gestire i cambi dei valori del dropdown (Aule/Box)
