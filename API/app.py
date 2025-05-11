@@ -11,7 +11,7 @@ from flask_jwt_extended import JWTManager
 
 
 app = Flask(__name__, static_folder='static')
-app.config["JWT_SECRET_KEY"] = "your_secret_key"  # Use a strong, random key
+app.config["JWT_SECRET_KEY"] = "f>NY.RzV:no8j17kZg!K0AlFv.q>mpcZB6=~J$a>G8l1<>lrAW?KP{-+!(ORX@" #chiave per JWT
 jwt = JWTManager(app)
 
 

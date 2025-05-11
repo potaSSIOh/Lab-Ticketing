@@ -7,7 +7,7 @@ from datetime import timedelta
 login_routes = Blueprint('login_routes', __name__)
 
 @login_routes.route('/login', methods=['POST'])
-@cross_origin(origins="http://127.0.0.1:5000")  # Allow CORS only from localhost:5000
+@cross_origin(origins="http://127.0.0.1:5000")  # Allow CORS only from 127.0.0.1
 def login():
     data = request.json
     email = data.get("name_mail")
@@ -29,8 +29,8 @@ def login():
         return jsonify({"status": "fail", "message": "Invalid credentials"}), 401
     
 def check_user(name_mail, password):
-    cursor = db.cursor()  # Assuming db_connection is your MySQL connection
+    cursor = db.cursor() 
     cursor.execute("SELECT * FROM utenti WHERE name_mail=%s AND password=%s", (name_mail, password))
-    user = cursor.fetchone()  # Fetch one result, or you can use fetchall() if you expect multiple results
+    user = cursor.fetchone()
     cursor.close()
     return user
