@@ -7,7 +7,7 @@ from routes.portatili_routes import portatili_routes
 from routes.ticket_routes import ticket_routes
 from routes.utenti_routes import utenti_routes
 from routes.login_routes import login_routes
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager #download flask_jwt with the command in the CMD (pip install Flask-JWT-Extended)
 
 
 app = Flask(__name__, static_folder='static')
