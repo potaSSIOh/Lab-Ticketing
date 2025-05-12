@@ -16,7 +16,6 @@ jwt = JWTManager(app)
 
 
 # Enable CORS for all routes, allowing localhost:5000 and 127.0.0.1:5000
-#UTILIZZARE 127.0.0.1:5000 PER CONNETTERSI E NON LOCALHOST:5000
 CORS(app, resources={r"/*": {"origins": ["http://localhost:5000", "http://127.0.0.1:5000"]}})
 
 

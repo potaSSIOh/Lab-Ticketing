@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, make_response
 from flask_cors import cross_origin  # Importing cross_origin to handle CORS per route
 from db import db
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token #download flask_jwt with the command in the CMD (pip install Flask-JWT-Extended)
 from datetime import timedelta
 
 login_routes = Blueprint('login_routes', __name__)
