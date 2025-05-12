@@ -81,8 +81,26 @@
     <p id="loginMessage"></p>
     <a href="forgottenPassword.html" class="forgotten-password-btn">Password dimenticata?</a>
 
-    <!-- Theme Toggle Script -->
+     
     <script>
+        // gestione del tema
+        document.addEventListener("DOMContentLoaded", () => {
+            const toggle = document.getElementById("themeToggle");
+            const body = document.body;
+            const savedTheme = localStorage.getItem("theme");
+
+            if (savedTheme === "dark") {
+                body.classList.add("dark-mode");
+                toggle.classList.add("checked");
+            }
+
+            toggle.addEventListener("click", () => {
+                body.classList.toggle("dark-mode");
+                toggle.classList.toggle("checked");
+                localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+            });
+        });
+
         document.getElementById("loginForm").addEventListener("submit", async function (e) {
             e.preventDefault();
     

@@ -8,19 +8,19 @@
     <link rel="stylesheet" href="styles/style.css">
     <style>
         #top-right-button {
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        z-index: 1000;
-    }
-    #bottom-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        #bottom-button {
             position: fixed;
             top: 100px; /* Adjust to position below Log Out button */
             right: 10px;
@@ -34,75 +34,74 @@
             z-index: 1000;
         }
     
-    td:hover {
-    background-color: #e2e6ea;
-    color: #007bff;
-    }
+        td:hover {
+            background-color: #e2e6ea;
+            color: #007bff;
+        }
 
+        #top-right-button:hover {
+            background-color: #0056b3; 
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
 
-    #top-right-button:hover {
-        background-color: #0056b3; 
-    }
-    body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
-        font-family: Arial, sans-serif;
-    }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-    h1 {
-        text-align: center;
-        margin-bottom: 20px;
-    }
+        .dropdown-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
 
-    .dropdown-container {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        max-width: 800px;
-        margin-top: 20px;
-    }
+        h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #ff0000;
+        }
 
-    h4 {
-        margin-bottom: 10px;
-        font-size: 18px;
-        color: #ff0000;
-    }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .modal-forms-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
 
-    select {
-        padding: 10px;
-        font-size: 16px;
-        width: 100%;
-        border-radius: 5px;
-        box-sizing: border-box;
-    }
-    .modal-forms-container {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 20px;
-    }
+        .modal-forms-container form {
+            display: inline;
+        }
 
-    .modal-forms-container form {
-        display: inline;
-    }
+        #btnInserisci, #btnVisualizza {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
 
-    #btnInserisci, #btnVisualizza {
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-    }
+        #btnInserisci:hover, #btnVisualizza:hover {
+            background-color: #0056b3;
+        }
 
-    #btnInserisci:hover, #btnVisualizza:hover {
-        background-color: #0056b3;
-    }
-
-</style>
+    </style>
 </head>
 
 <body>
@@ -134,35 +133,56 @@
 
     <button id="bottom-button" onclick="CreateUser()">Crea Utente</button>
     <div id="table-container" style="margin-top: 30px; width: 100%; max-width: 800px;"></div>
-<!-- Modale -->
-<div id="miaModale" class="modale">
-    <div class="modale-content">
-        <span class="close">&times;</span>
-        <h1>TICKET</h1>
-        <p id="hostnameText"></p>
 
-        <div class="modal-forms-container">
-            <!-- inserimento da controllare (chiamata funzione js)-->
-            <form action="" method="post">
-                <button id="btnInserisci">Inserisci ticket</button>
-            </form>
+    <!-- Modale -->
+    <div id="miaModale" class="modale">
+        <div class="modale-content">
+            <span class="close">&times;</span>
+            <h1>TICKET</h1>
+            <p id="hostnameText"></p>
 
-            <form action="visualizzatoreTicket.html" target="_blank" method="post">
-                <button id="btnVisualizza">Visualizza Ticket</button>
-            </form>
+            <div class="modal-forms-container">
+                <!-- inserimento da controllare (chiamata funzione js)-->
+                <form action="" method="post">
+                    <button id="btnInserisci">Inserisci ticket</button>
+                </form>
+
+                <form action="visualizzatoreTicket.html" target="_blank" method="get">
+                    <button id="btnVisualizza">Visualizza Ticket</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-  
+
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
     <script>
         // Verifica che l'utente sia loggato (token presente)
         document.addEventListener("DOMContentLoaded", () => {
             const token = localStorage.getItem("token");
             if (!token) {
-        // Se non c'è il token, manda alla pagina di login
+                // Se non c'è il token, manda alla pagina di login
                 window.location.href = "index.html";
-    }
-});
+            } else {
+                try {
+                    // Decodifica il token JWT
+                    const decoded = jwt_decode(token);
+                    const userId = decoded.user_id; // Ottieni user_id dai claims
+
+                    // Verifica se l'ID dell'utente è 1 (amministratore)
+                    if (userId === 1) {
+                        // Mostra il pulsante "Crea Utente" solo se l'ID dell'utente è 1
+                        document.getElementById("bottom-button").style.display = "block";
+                    } else {
+                        // Nascondi il pulsante "Crea Utente" per gli utenti che non hanno ID 1
+                        document.getElementById("bottom-button").style.display = "none";
+                    }
+                } catch (error) {
+                    console.error("Error decoding token:", error);
+                    window.location.href = "index.html";
+                }
+            }
+        });
+
         hostname = "";
         // gestione del tema
         document.addEventListener("DOMContentLoaded", () => {
@@ -183,22 +203,21 @@
         });
 
         function LogOut() {
-            // Rimuove il token JWT salvato localmente
             localStorage.removeItem("token");
-        
-            // Reindirizza alla pagina di login
+            localStorage.removeItem("selectedType");
+            localStorage.removeItem("selectedAule");
+            localStorage.removeItem("selectedBox");
+            localStorage.removeItem("selectedPc");
+            localStorage.removeItem("PcType");
             window.location.href = "index.html";
         }
-        function CreateUser() {
-            window.location.href = "createUser.html";
-        }
-        
+
         // Funzione per gestire i cambi dei valori del dropdown (Aule/Box)
         function handleChange(type) {
             const listElement = type === 'Aule' ? document.getElementById('AuleList') : document.getElementById('BoxList');
             const selectedValue = listElement.value;
-            
-            // Pulisco il contenuto del dropdown in caso di cambiamento del di quest ultimo
+
+            // Pulizia dropdown opposto
             if (type === 'Aule') {
                 document.getElementById('BoxList').value = "";
             } else {
@@ -206,18 +225,18 @@
             }
 
             if (selectedValue) {
-                fetch(`save${type}ToSession.php`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: `selected${type}=${encodeURIComponent(selectedValue)}`
-                })
-                .then(response => response.text())
-                .then(() => loadDetails(type, selectedValue))
-                .catch(() => document.getElementById('table-container').innerHTML = `<p>Nessun dato disponibile per il ${type} selezionato.</p>`);
+                // Salva in localStorage
+                localStorage.setItem('selectedType', type);
+                localStorage.setItem(`selected${type}`, selectedValue);
+
+                // Carica i dettagli
+                loadDetails(type, selectedValue);
             }
         }
+
+            function CreateUser() {
+                window.open("/static/createUser.html", "_blank");
+            }
 
         // Carico i dati(Aule o Box)
         async function loadDetails(type, value) {
@@ -271,46 +290,31 @@
                         dataRow = document.createElement("tr");
                     }
                 });
+
                 tbody.addEventListener('click', function(event) {
-                        let target = event.target;
+                    let target = event.target;
+                    hostname = target.textContent;
 
-                        hostname = event.target.textContent;
-                        console.log(type);
+                    const pcType = type;
+                    localStorage.setItem('PcType', pcType);
+                    localStorage.setItem('selectedPc', hostname);
 
+                    console.log("PcType:", pcType);
+                    console.log("Selected Hostname:", hostname);
 
-                        const formData = new URLSearchParams();
-                        formData.append("PcType", type);
-                        formData.append("selectedPc", hostname);
+                    while (target && target.nodeName !== 'TR') {
+                        target = target.parentElement;
+                    }
 
-                        fetch("savePcToSession.php", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        body: formData.toString()
-                                })
-                        .then(response => response.text())
-                        .then(HostnameSelected => {
-                        console.log("Server response:", HostnameSelected);
-                            });
-
-                            
-                        while (target && target.nodeName !== 'TR') {
-                          target = target.parentElement;
-                        }
-                        if (target) {
-                          const celle = target.getElementsByTagName('td');
-                          if (celle.length > 0) {
-                            let contenuto = '';
-                            for (let cella of celle) {
-                              contenuto += cella.innerText + ' ';
-                            }
+                    if (target) {
+                        const celle = target.getElementsByTagName('td');
+                        if (celle.length > 0) {
                             const hostnameText = document.getElementById('hostnameText');
                             hostnameText.textContent = "Hostname PC :" + hostname;
                             modale.style.display = 'block';
-                          }
                         }
-                      });
+                    }
+                });
 
                 if (dataRow.children.length > 0) tbody.appendChild(dataRow);
 
@@ -350,7 +354,6 @@
             fetchData('http://localhost:5000/aule', 'AuleList');
             fetchData('http://localhost:5000/box', 'BoxList');
         }
-
 
         initializeData();
     </script>

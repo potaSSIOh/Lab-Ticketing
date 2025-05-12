@@ -28,6 +28,7 @@ def protected():
     return jsonify(logged_in_as=current_user), 200
 
 # index.html called when http://127.0.0.1/ is called
+#NON CHIAMARE LA PAGINA CON LOCALHOST:5000 MA CON 127.0.0.1:5000
 @app.route('/')
 def serve_index():
     return app.send_static_file('index.html')
