@@ -16,6 +16,7 @@ jwt = JWTManager(app)
 
 
 # Enable CORS for all routes, allowing localhost:5000 and 127.0.0.1:5000
+#UTILIZZARE 127.0.0.1:5000 PER CONNETTERSI E NON LOCALHOST:5000
 CORS(app, resources={r"/*": {"origins": ["http://localhost:5000", "http://127.0.0.1:5000"]}})
 
 
@@ -27,12 +28,12 @@ def protected():
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
 
-# Serve index.html at root
+# index.html called when http://127.0.0.1/ is called
 @app.route('/')
 def serve_index():
     return app.send_static_file('index.html')
 
-# Register blueprints for your routes (API)
+# Register blueprints (API)
 app.register_blueprint(aule_routes)
 app.register_blueprint(box_routes)
 app.register_blueprint(fissi_routes)
