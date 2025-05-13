@@ -2,46 +2,45 @@ from flask import Blueprint, request, jsonify, make_response
 
 from db import db
 
-ticket_routes = Blueprint('ticket_routes', __name__)
+ticketf_routes = Blueprint('ticketf_routes', __name__)
 
-@ticket_routes.route('/ticket', methods=['GET'])
-def get_tickets():
+@ticketf_routes.route('/ticketf', methods=['GET'])
+def get_ticketsf():
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM ticket")
+    cursor.execute("SELECT * FROM ticketf")
     return jsonify(cursor.fetchall()), 200
 
 #-----------------------------------------------------
 
-@ticket_routes.route('/ticket', methods=['POST'])
-def add_ticket():
+@ticketf_routes.route('/ticketf', methods=['POST'])
+def add_ticketf():
     data = request.get_json()
     try:
         descrizione = data["descrizione"]
         dataOra = data["dataOra"]
         creatore = data["creatore"]
         hostnameF = data.get("hostnameF")
-        hostnameP = data.get("hostnameP")
         tecnico = data.get("tecnico")
         stato = data["stato"]
     except KeyError as e:
         return make_response(jsonify({"Error": f"Campo mancante: {str(e)}"}), 400)
 
     cursor = db.cursor()
-    sql = """INSERT INTO ticket (descrizione, dataOra, creatore, hostnameF, hostnameP, tecnico, stato)
-             VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-    cursor.execute(sql, (descrizione, dataOra, creatore, hostnameF, hostnameP, tecnico, stato))
+    sql = """INSERT INTO ticketf (descrizione, dataOra, creatore, hostnameF, tecnico, stato)
+             VALUES (%s, %s, %s, %s, %s, %s)"""
+    cursor.execute(sql, (descrizione, dataOra, creatore, hostnameF, tecnico, stato))
     db.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "risorsa non inserita"}), 403)
 
     res = make_response(jsonify({"Status": "OK"}), 201)
-    res.headers.add("location", f"/ticket/{cursor.lastrowid}")
+    res.headers.add("location", f"/ticketf/{cursor.lastrowid}")
     return res
 
 #-----------------------------------------------------
 
-@ticket_routes.route('/ticket/<int:id>', methods=['PATCH'])
+@ticketf_routes.route('/ticketf/<int:id>', methods=['PATCH'])
 def update_descrizione(id):
     data = request.get_json()
     try:
@@ -50,7 +49,7 @@ def update_descrizione(id):
         return make_response(jsonify({"Error": "Campo 'descrizione' mancante"}), 400)
 
     cursor = db.cursor()
-    cursor.execute("UPDATE ticket SET descrizione = %s WHERE id = %s", (descrizione, id))
+    cursor.execute("UPDATE ticketf SET descrizione = %s WHERE id = %s", (descrizione, id))
     db.commit()
 
     if cursor.rowcount == 0:
@@ -58,7 +57,7 @@ def update_descrizione(id):
 
     return make_response(jsonify({"Status": "Descrizione aggiornata"}), 200)
 
-@ticket_routes.route('/ticket/<int:id>/tecnico', methods=['PATCH'])
+@ticketf_routes.route('/ticketf/<int:id>/tecnico', methods=['PATCH'])
 def update_tecnico(id):
     data = request.get_json()
     try:
@@ -67,7 +66,7 @@ def update_tecnico(id):
         return make_response(jsonify({"Error": "Campo 'tecnico' mancante"}), 400)
 
     cursor = db.cursor()
-    cursor.execute("UPDATE ticket SET tecnico = %s WHERE id = %s", (tecnico, id))
+    cursor.execute("UPDATE ticketf SET tecnico = %s WHERE id = %s", (tecnico, id))
     db.commit()
 
     if cursor.rowcount == 0:
@@ -75,7 +74,7 @@ def update_tecnico(id):
 
     return make_response(jsonify({"Status": "Tecnico aggiornato"}), 200)
 
-@ticket_routes.route('/ticket/<int:id>/stato', methods=['PATCH'])
+@ticketf_routes.route('/ticketf/<int:id>/stato', methods=['PATCH'])
 def update_stato(id):
     data = request.get_json()
     try:
@@ -84,7 +83,7 @@ def update_stato(id):
         return make_response(jsonify({"Error": "Campo 'stato' mancante"}), 400)
 
     cursor = db.cursor()
-    cursor.execute("UPDATE ticket SET stato = %s WHERE id = %s", (stato, id))
+    cursor.execute("UPDATE ticketf SET stato = %s WHERE id = %s", (stato, id))
     db.commit()
 
     if cursor.rowcount == 0:
