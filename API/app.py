@@ -45,11 +45,7 @@ app.register_blueprint(portatili_routes)
 app.register_blueprint(ticketf_routes)
 app.register_blueprint(ticketp_routes)
 app.register_blueprint(utenti_routes)
-<<<<<<< HEAD
 app.register_blueprint(login_routes)
-=======
 app.register_blueprint(password_routes)
->>>>>>> origin/recuperoPassword
-
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
