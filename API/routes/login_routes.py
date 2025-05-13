@@ -20,7 +20,9 @@ def login():
     user = check_user(email, password)
 
     if user:
+        #usata per controllare se accedi con il boss o no per la creazione degli utenti
         user_id = user['id']  # Accedi tramite la chiave 'id' del dizionario
+        #creazione token per l'accesso
         access_token = create_access_token(identity=email, additional_claims={"user_id": user_id}, expires_delta=timedelta(hours=1))
         return jsonify({
             "status": "success",
@@ -37,7 +39,7 @@ def check_user(name_mail, password):
     cursor.close()
 
     if user:
-        # Confronta la password in chiaro
-        if user['password'] == password:  # Verifica direttamente la password in chiaro
+        # Confronta la password 
+        if user['password'] == password: 
             return {'id': user['id'], 'name_mail': user['name_mail']}
     return None

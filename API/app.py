@@ -14,7 +14,7 @@ app = Flask(__name__, static_folder='static')
 app.config["JWT_SECRET_KEY"] = "f>NY.RzV:no8j17kZg!K0AlFv.q>mpcZB6=~J$a>G8l1<>lrAW?KP{-+!(ORX@" #chiave per JWT
 jwt = JWTManager(app)
 
-
+# NON CHIAMARE LA PAGINA CON LOCALHOST:5000 MA CON 127.0.0.1:5000
 # Enable CORS for all routes, allowing localhost:5000 and 127.0.0.1:5000
 CORS(app, resources={r"/*": {"origins": ["http://localhost:5000", "http://127.0.0.1:5000"]}})
 
@@ -28,7 +28,6 @@ def protected():
     return jsonify(logged_in_as=current_user), 200
 
 # index.html called when http://127.0.0.1/ is called
-#NON CHIAMARE LA PAGINA CON LOCALHOST:5000 MA CON 127.0.0.1:5000
 @app.route('/')
 def serve_index():
     return app.send_static_file('index.html')

@@ -142,7 +142,7 @@
                         successMessage.style.display = "block";
                         document.getElementById("registerForm").reset(); // resetta il form
                     } else {
-                        errorMessage.textContent = data.Error || "Errore nella registrazione.";
+                        errorMessage.textContent = data.Error || "Utente già registrato.";
                         errorMessage.style.display = "block";
                         successMessage.style.display = "none";
                     }
