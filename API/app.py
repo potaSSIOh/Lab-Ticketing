@@ -7,8 +7,12 @@ from routes.portatili_routes import portatili_routes
 from routes.ticketf_routes import ticketf_routes
 from routes.ticketp_routes import ticketp_routes
 from routes.utenti_routes import utenti_routes
+<<<<<<< HEAD
 from routes.login_routes import login_routes
 from flask_jwt_extended import JWTManager
+=======
+from routes.password_routes import password_routes
+>>>>>>> origin/recuperoPassword
 
 
 app = Flask(__name__, static_folder='static')
@@ -41,7 +45,11 @@ app.register_blueprint(portatili_routes)
 app.register_blueprint(ticketf_routes)
 app.register_blueprint(ticketp_routes)
 app.register_blueprint(utenti_routes)
+<<<<<<< HEAD
 app.register_blueprint(login_routes)
+=======
+app.register_blueprint(password_routes)
+>>>>>>> origin/recuperoPassword
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
