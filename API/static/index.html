@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LOGIN</title>
+    <link rel="stylesheet" href="/static/styles/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        form {
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+        }
+
+        #marconi_logo {
+            position: fixed;
+            top: 6px;
+            right: 6px;
+            padding: 10px 20px;
+            cursor: pointer;
+            width: 180px;
+            height: 150px;
+        }
+
+        .forgotten-password-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .forgotten-password-btn:hover {
+            background-color: #003b4b;
+        }
+
+        #loginMessage {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Theme Toggle -->
+    <label class="theme">
+        <div id="themeToggle" class="theme__toggle"></div>
+    </label>
+    <a href="https://www.marconiverona.edu.it/" target="_blank">
+        <img id="marconi_logo" src="/static/images/marconi_logo.png" alt="Logo Marconi">
+    </a>
+
+    <h1>LOGIN</h1>
+    <form id="loginForm">
+        <label for="username">Mail</label>
+        <input type="text" id="username" name="username" required />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required />
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p id="loginMessage"></p>
+    <a href="/static/forgottenPassword.html" class="forgotten-password-btn">Password dimenticata?</a>
+
+     
+    <script>
+        // gestione del tema
+        document.addEventListener("DOMContentLoaded", () => {
+            const toggle = document.getElementById("themeToggle");
+            const body = document.body;
+            const savedTheme = localStorage.getItem("theme");
+
+            if (savedTheme === "dark") {
+                body.classList.add("dark-mode");
+                toggle.classList.add("checked");
+            }
+
+            toggle.addEventListener("click", () => {
+                body.classList.toggle("dark-mode");
+                toggle.classList.toggle("checked");
+                localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+            });
+        });
+
+        document.getElementById("loginForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+    
+            const email = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const messageElement = document.getElementById("loginMessage");
+    
+            try {
+                const response = await fetch("http://127.0.0.1:5000/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name_mail: email, password: password })
+                });
+    
+                const result = await response.json();
+    
+                if (response.ok && result.access_token) {
+                    localStorage.setItem("token", result.access_token);
+                    window.location.href = "/static/home.html";
+                } else {
+                    messageElement.textContent = result.message || "Errore di login.";
+                    messageElement.style.color = "red";
+                }
+            } catch (error) {
+                messageElement.textContent = "Errore di connessione al server.";
+                messageElement.style.color = "red";
+            }
+        });
+    </script>
+    
+</body>
+
+</html>

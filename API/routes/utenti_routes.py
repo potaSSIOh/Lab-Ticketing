@@ -8,6 +8,7 @@ utenti_routes = Blueprint('utenti_routes', __name__)
 
 @utenti_routes.route('/utenti', methods=['GET'])
 def get_utenti():
+    #creazione cursor per la gestione delle query
     cursor = db.cursor()
     cursor.execute("SELECT * FROM utenti")
     return jsonify(cursor.fetchall()), 200
