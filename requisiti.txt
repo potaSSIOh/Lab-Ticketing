@@ -21,7 +21,7 @@ Attualmente, la gestione delle segnalazioni avviene manualmente, rendendo diffic
 - Archivio storico delle segnalazioni
 
 2.2 Vincoli
-- L'applicazione sarà sviluppata in PHP e HTML
+- L'applicazione sarà sviluppata in Python, JavaScript e HTML
 - Comunicazione con il database mediante JSON
 
 3. Requisiti Funzionali
@@ -40,7 +40,7 @@ Attualmente, la gestione delle segnalazioni avviene manualmente, rendendo diffic
 
 5. Requisiti Tecnici
 
-- Backend: PHP
+- Backend: Python
 - Frontend: HTML, CSS, JavaScript
 - Database: MySQL
 - Comunicazione dati: JSON per lo scambio con il database
@@ -54,3 +54,5 @@ Attualmente, la gestione delle segnalazioni avviene manualmente, rendendo diffic
 
 - Diagrammi delle entità del database
 
+8. Librerie Necessarie
+- Flask: pip install flask; Flask-CORS: pip install flask-cors; Flask-JWT-Extended: pip install flask-jwt-extended

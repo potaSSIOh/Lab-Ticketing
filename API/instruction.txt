@@ -1,0 +1,33 @@
+Istruzioni API
+
+Struttura del database:
+
+    utenti(id, name_mail, password, autorizzato)
+    ticket(idTicket, descrizione, dataOra, creatore, hostnameF*, hostnameP*, tecnico*, stato)
+    aule(nAula, Lab)
+    fissi(HostName, Aula)
+    box(codBox)
+    portatili(hostname, codBox)
+
+Librerie:
+
+    scaricare le librerie necessarie seguendo i seguenti comandi:
+    -pip install pymysql
+    -pip install Flask
+    -pip install flask-cors
+
+Passo 1
+Avviare il programma "app.py" per poter utilizzare i metodi
+
+Passo 2
+Scrivere questo URL "http://localhost:5000/" + il nome della tablla desiderata, con eventuali parametri
+
+Passo 3
+Inserire nel body i parametri per usare metodi POST / PATCH oppure leggere i parametri tramite la GET
+
+----------------------------------------------------------------------
+
+Percentuali di contribuzione del lavoro:
+    Dai Prè: 50% (schema ER e traduzione logica, documentazione, style e bottone notte/giorno, API)
+    Dorella: 25% (login, home, database)
+    Faccio:  25% (documentazione, primo API in php, cambio password)

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <style>
+
+        td:hover {
+            background-color: #e2e6ea;
+            color: #007bff;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .dropdown-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+
+        h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #ff0000;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <label class="theme">
+        <div id="themeToggle" class="theme__toggle"></div>
+    </label>
+    <h1>Create User</h1>
+<form id="registerForm">
+    <label for="username">Mail</label>
+    <input type="text" id="username" name="username" required />
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required />
+
+    <label for="confirmPassword">Conferma Password</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" required />
+    <label for="autorizzato">Autorizzato (0 o 1)</label>
+    <input type="number" id="autorizzato" name="autorizzato" min="0" max="1" required />
+
+
+    <button type="submit">Registrati</button>
+
+    <p id="errorMessage" style="color: red; display: none;"></p>
+    <p id="successMessage" style="color: green; display: none;"></p>
+</form>
+
+
+    <script>
+
+        
+        // Gestione del tema
+        document.addEventListener("DOMContentLoaded", () => {
+            const toggle = document.getElementById("themeToggle");
+            const body = document.body;
+            const savedTheme = localStorage.getItem("theme");
+
+            if (savedTheme === "dark") {
+                body.classList.add("dark-mode");
+                toggle.classList.add("checked");
+            }
+
+            toggle.addEventListener("click", () => {
+                body.classList.toggle("dark-mode");
+                toggle.classList.toggle("checked");
+                localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+            });
+        });
+            document.getElementById("registerForm").addEventListener("submit", async function(event) {
+                event.preventDefault(); // Blocca invio predefinito
+
+                const email = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+                const confirmPassword = document.getElementById("confirmPassword").value;
+                const autorizzato = parseInt(document.getElementById("autorizzato").value);
+                const errorMessage = document.getElementById("errorMessage");
+                const successMessage = document.getElementById("successMessage");
+
+                if (password !== confirmPassword) {
+                    errorMessage.textContent = "Le password non coincidono.";
+                    errorMessage.style.display = "block";
+                    successMessage.style.display = "none";
+                    return;
+                }
+
+                if (![0, 1].includes(autorizzato)) {
+                    errorMessage.textContent = "Il campo 'Autorizzato' deve essere 0 o 1.";
+                    errorMessage.style.display = "block";
+                    successMessage.style.display = "none";
+                    return;
+                }
+
+                try {
+                    const response = await fetch("http://127.0.0.1:5000/utenti", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            name_mail: email,
+                            password: password,
+                            autorizzato: autorizzato
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        errorMessage.style.display = "none";
+                        successMessage.textContent = "Utente registrato con successo!";
+                        successMessage.style.display = "block";
+                        document.getElementById("registerForm").reset(); // resetta il form
+                    } else {
+                        errorMessage.textContent = data.Error || "Utente già registrato.";
+                        errorMessage.style.display = "block";
+                        successMessage.style.display = "none";
+                    }
+                } catch (error) {
+                    errorMessage.textContent = "Errore nella comunicazione con il server.";
+                    errorMessage.style.display = "block";
+                    successMessage.style.display = "none";
+                }
+            });
+    </script>
+</body>
+
+</html>

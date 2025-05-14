@@ -5,11 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LOGIN</title>
-    
-    <!-- External CSS -->
     <link rel="stylesheet" href="/static/styles/style.css">
-
-    <!-- Inline Styles (consider moving to external CSS file) -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -67,15 +63,11 @@
     <label class="theme">
         <div id="themeToggle" class="theme__toggle"></div>
     </label>
-
-    <!-- Logo -->
     <a href="https://www.marconiverona.edu.it/" target="_blank">
         <img id="marconi_logo" src="/static/images/marconi_logo.png" alt="Logo Marconi">
     </a>
 
     <h1>LOGIN</h1>
-
-    <!-- Login Form -->
     <form id="loginForm">
         <label for="username">Mail</label>
         <input type="text" id="username" name="username" required />
@@ -86,14 +78,29 @@
         <button type="submit">Login</button>
     </form>
 
-    <!-- Message -->
     <p id="loginMessage"></p>
+    <a href="/static/forgottenPassword.html" class="forgotten-password-btn">Password dimenticata?</a>
 
-    <!-- Forgotten Password Link -->
-    <a href="forgottenPassword.html" class="forgotten-password-btn">Password dimenticata?</a>
-
-    <!-- Theme Toggle Script -->
+     
     <script>
+        // gestione del tema
+        document.addEventListener("DOMContentLoaded", () => {
+            const toggle = document.getElementById("themeToggle");
+            const body = document.body;
+            const savedTheme = localStorage.getItem("theme");
+
+            if (savedTheme === "dark") {
+                body.classList.add("dark-mode");
+                toggle.classList.add("checked");
+            }
+
+            toggle.addEventListener("click", () => {
+                body.classList.toggle("dark-mode");
+                toggle.classList.toggle("checked");
+                localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+            });
+        });
+
         document.getElementById("loginForm").addEventListener("submit", async function (e) {
             e.preventDefault();
     

@@ -26,13 +26,13 @@ def get_portatili(codBox=None):
 def add_portatile():
     data = request.get_json()
     try:
-        HostName = data["HostName"]
+        hostname = data["hostname"]
         codBox = data["codBox"]
     except KeyError as e:
         return make_response(jsonify({"Error": f"Campo mancante: {str(e)}"}), 400)
 
     cursor = db.cursor()
-    cursor.execute("INSERT INTO portatili (HostName, codBox) VALUES (%s, %s)", (HostName, codBox))
+    cursor.execute("INSERT INTO portatili (hostname, codBox) VALUES (%s, %s)", (hostname, codBox))
     db.commit()
 
     if cursor.rowcount == 0:

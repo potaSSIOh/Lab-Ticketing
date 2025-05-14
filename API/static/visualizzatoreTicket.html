@@ -2,56 +2,54 @@
 <html lang="it">
 
 <head>
-    <label class="theme">
-        <div id="themeToggle" class="theme__toggle"></div>
-    </label>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="styles/style.css">
-    <h1 id="hostnameTitle" style="text-align: center;"></h1>
 </head>
+
 <body>
+    <label class="theme">
+        <div id="themeToggle" class="theme__toggle"></div>
+    </label>
+    <h1 id="hostnameTitle" style="text-align: center;"></h1>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Verifica presenza token JWT
+            const token = localStorage.getItem("token");
+            if (!token) {
+                window.location.href = "index.html"; // Redirezione alla login
+                return;
+            }
 
-<script>
-    hostname = "";
-    type = "";
-    // gestione del tema
-    document.addEventListener("DOMContentLoaded", () => {
-        const toggle = document.getElementById("themeToggle");
-        const body = document.body;
-        const savedTheme = localStorage.getItem("theme");
+            // Gestione tema
+            const toggle = document.getElementById("themeToggle");
+            const body = document.body;
+            const savedTheme = localStorage.getItem("theme");
 
-        if (savedTheme === "dark") {
-            body.classList.add("dark-mode");
-            toggle.classList.add("checked");
-        }
+            if (savedTheme === "dark") {
+                body.classList.add("dark-mode");
+                toggle.classList.add("checked");
+            }
 
-        toggle.addEventListener("click", () => {
-            body.classList.toggle("dark-mode");
-            toggle.classList.toggle("checked");
-            localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+            toggle.addEventListener("click", () => {
+                body.classList.toggle("dark-mode");
+                toggle.classList.toggle("checked");
+                localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+            });
+
+            // Recupero hostname e tipo
+            const hostname = localStorage.getItem("selectedPc");
+            const type = localStorage.getItem("PcType");
+
+            if (hostname) {
+                document.getElementById("hostnameTitle").textContent = `Hostname: ${hostname}`;
+                console.log("Retrieved from localStorage:", hostname, type);
+            } else {
+                console.warn("Hostname non trovato nel localStorage");
+            }
         });
-    });
-    fetch("get_pc.php")
-    .then(response => response.json())
-    .then(data => {
-        const hostname = data.Pc;
-        const type = data.Type;
-        console.log("Retrieved session value:", hostname);
-        
-        const hostnameTitle = document.getElementById('hostnameTitle');
-        hostnameTitle.textContent = hostname;
-        
-        console.log(type);
-    })
-    .catch(error => {
-        console.error("Error fetching session value:", error);
-    });
-
-</script>
-
+    </script>
 </body>
 </html>
-
