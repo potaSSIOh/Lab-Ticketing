@@ -4,26 +4,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Visualizza Ticket</title>
     <link rel="stylesheet" href="styles/style.css">
+    <style>
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        input, select {
+            width: 100%;
+        }
+    </style>
 </head>
 
 <body>
+    <script>
+        localStorage.setItem("token", "tuoToken");
+        localStorage.setItem("autorizzato", "1");
+        localStorage.setItem("selectedPc", "nomePC123");
+    </script>
+
     <label class="theme">
         <div id="themeToggle" class="theme__toggle"></div>
     </label>
     <h1 id="hostnameTitle" style="text-align: center;"></h1>
 
+    <div id="ticketContainer">
+        <table id="ticketTable">
+            <thead>
+                <tr>
+                    <th>ID Ticket</th>
+                    <th>Descrizione</th>
+                    <th>Data/Ora</th>
+                    <th>Creatore</th>
+                    <th>Hostname</th>
+                    <th>Tecnico</th>
+                    <th>Stato</th>
+                </tr>
+            </thead>
+            <tbody id="ticketBody">
+                <!-- Ticket inseriti dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Verifica presenza token JWT
             const token = localStorage.getItem("token");
+            const autorizzato = localStorage.getItem("autorizzato") === "1"; // Converti in boolean
+            const hostname = localStorage.getItem("selectedPc");
+
             if (!token) {
-                window.location.href = "index.html"; // Redirezione alla login
+                window.location.href = "index.html";
                 return;
             }
 
-            // Gestione tema
             const toggle = document.getElementById("themeToggle");
             const body = document.body;
             const savedTheme = localStorage.getItem("theme");
@@ -39,17 +85,84 @@
                 localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
             });
 
-            // Recupero hostname e tipo
-            const hostname = localStorage.getItem("selectedPc");
-            const type = localStorage.getItem("PcType");
-
             if (hostname) {
                 document.getElementById("hostnameTitle").textContent = `Hostname: ${hostname}`;
-                console.log("Retrieved from localStorage:", hostname, type);
             } else {
                 console.warn("Hostname non trovato nel localStorage");
             }
+
+            // Simulazione fetch dei ticket associati all'hostname
+            const tickets = [
+                {
+                    idTicket: 1,
+                    descrizione: "Problema rete",
+                    dataOra: "2025-05-12 09:30",
+                    creatore: "Mario",
+                    hostnameF: hostname,
+                    tecnico: "",
+                    stato: "Aperto"
+                },
+                {
+                    idTicket: 2,
+                    descrizione: "Errore sistema",
+                    dataOra: "2025-05-13 11:00",
+                    creatore: "Luigi",
+                    hostnameF: hostname,
+                    tecnico: "Tecnico1",
+                    stato: "In lavorazione"
+                }
+            ];
+
+            const ticketBody = document.getElementById("ticketBody");
+
+            tickets.forEach(ticket => {
+                const tr = document.createElement("tr");
+
+                tr.innerHTML = `
+                    <td>${ticket.idTicket}</td>
+                    <td>
+                        <input type="text" value="${ticket.descrizione}"
+                               onchange="updateTicket(${ticket.idTicket}, 'descrizione', this.value)">
+                    </td>
+                    <td>${ticket.dataOra}</td>
+                    <td>${ticket.creatore}</td>
+                    <td>${ticket.hostnameF}</td>
+                    <td>
+                        ${autorizzato ? `
+                            <input type="text" value="${ticket.tecnico}"
+                                   onchange="updateTicket(${ticket.idTicket}, 'tecnico', this.value)">
+                        ` : ticket.tecnico}
+                    </td>
+                    <td>
+                        ${autorizzato ? `
+                            <select onchange="updateTicket(${ticket.idTicket}, 'stato', this.value)">
+                                <option value="Aperto" ${ticket.stato === 'Aperto' ? 'selected' : ''}>Aperto</option>
+                                <option value="In lavorazione" ${ticket.stato === 'In lavorazione' ? 'selected' : ''}>In lavorazione</option>
+                                <option value="Chiuso" ${ticket.stato === 'Chiuso' ? 'selected' : ''}>Chiuso</option>
+                            </select>
+                        ` : ticket.stato}
+                    </td>
+                `;
+
+                ticketBody.appendChild(tr);
+            });
+
+            // Funzione simulata per aggiornare il ticket (da collegare al backend reale)
+            window.updateTicket = (idTicket, field, value) => {
+                console.log(`Aggiorno ticket ${idTicket}: ${field} = ${value}`);
+                // fetch(`/api/tickets/${idTicket}`, {
+                //     method: 'PUT',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         'Authorization': `Bearer ${token}`
+                //     },
+                //     body: JSON.stringify({ [field]: value })
+                // })
+                // .then(res => res.json())
+                // .then(data => console.log("Ticket aggiornato", data));
+            };
         });
     </script>
 </body>
+
 </html>
