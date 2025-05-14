@@ -143,11 +143,11 @@
 
             <div class="modal-forms-container">
                 <!-- inserimento da controllare (chiamata funzione js)-->
-                <form action="" method="post">
+                <form action="/static/createTicket.html" target="_blank" method="get">
                     <button id="btnInserisci">Inserisci ticket</button>
                 </form>
 
-                <form action="visualizzatoreTicket.html" target="_blank" method="get">
+                <form action="/static/visualizzatoreTicket.html" target="_blank" method="get">
                     <button id="btnVisualizza">Visualizza Ticket</button>
                 </form>
             </div>
@@ -167,7 +167,7 @@
                     // Decodifica il token JWT
                     const decoded = jwt_decode(token);
                     const userId = decoded.user_id; // Ottieni user_id dai claims
-
+                    localStorage.setItem("User", userId);
                     // Verifica se l'ID dell'utente è 1 (amministratore)
                     if (userId === 1) {
                         // Mostra il pulsante "Crea Utente" solo se l'ID dell'utente è 1

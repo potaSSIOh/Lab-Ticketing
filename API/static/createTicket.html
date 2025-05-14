@@ -1,59 +1,148 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create User</title>
-    <link rel="stylesheet" href="styles/style.css">
-    <style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inserisci Ticket</title>
+  <link rel="stylesheet" href="/static/styles/style.css">
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          margin: 0;
+      }
 
-        td:hover {
-            background-color: #e2e6ea;
-            color: #007bff;
-        }
+      form {
+          padding: 20px;
+          border-radius: 10px;
+          display: flex;
+          flex-direction: column;
+          width: 300px;
+      }
 
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-        }
+      /* Add margin-bottom to the select to create space between dropdown and button */
+      #stato {
+          margin-bottom: 20px; /* Adjust the value as needed */
+      }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .dropdown-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 800px;
-            margin-top: 20px;
-        }
-
-        h4 {
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: #ff0000;
-        }
-
-        select {
-            padding: 10px;
-            font-size: 16px;
-            width: 100%;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-    </style>
+      /* Optionally add some margin to the button for extra space */
+      button {
+          margin-top: 10px; /* Adjust the value as needed */
+      }
+  </style>
 </head>
-
 <body>
 
+  <h1>Inserisci Ticket</h1>
+  <label class="theme">
+    <div id="themeToggle" class="theme__toggle"></div>
+  </label>
+  <form id="ticketForm">
+    <label for="descrizione">Descrizione:</label>
+    <textarea id="descrizione" name="descrizione" required></textarea>
 
-    <label class="theme">
-        <div id="themeToggle" class="theme__toggle"></div>
-    </label>
-    <h1>Create Ticket</h1>
+    <label id="hostnameLabel" for="hostname">Hostname:</label>
+    <input type="text" id="hostname" name="hostname" readonly />
+
+    <label for="stato">Stato:</label>
+    <select id="stato" name="stato" required>
+      <option value="Aperto">Aperto</option>
+      <option value="In lavorazione">In lavorazione</option>
+      <option value="Chiuso">Chiuso</option>
+    </select>
+    
+    <button type="submit">Invia Ticket</button>
+  </form>
+
+  <script>
+    // gestione del tema
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("themeToggle");
+      const body = document.body;
+      const savedTheme = localStorage.getItem("theme");
+
+      if (savedTheme === "dark") {
+        body.classList.add("dark-mode");
+        toggle.classList.add("checked");
+      }
+
+      toggle.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+        toggle.classList.toggle("checked");
+        localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+      });
+    });
+
+    window.onload = () => {
+      const pcType = localStorage.getItem("PcType");
+      const hostname = localStorage.getItem("selectedPc");
+
+      const hostnameLabel = document.getElementById("hostnameLabel");
+      const hostnameInput = document.getElementById("hostname");
+
+      if (pcType === "portatili") {
+        hostnameLabel.textContent = "HostnameP:";
+        hostnameInput.name = "hostnameP";
+      } else {
+        hostnameLabel.textContent = "HostnameF:";
+        hostnameInput.name = "hostnameF";
+      }
+
+      hostnameInput.value = hostname || "";
+    };
+
+    document.getElementById("ticketForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const pcType = localStorage.getItem("PcType");
+      const selectedPc = localStorage.getItem("selectedPc");
+      const user = localStorage.getItem("User");
+
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      data.dataOra = new Date().toISOString(); // Format ISO
+      data.creatore = user; // Prelevato da localStorage
+      data.tecnico = null; // Tecnico non viene chiesto ora
+
+      if (pcType === "portatili") {
+        data.hostnameP = selectedPc;
+        delete data.hostnameF;
+      } else {
+        data.hostnameF = selectedPc;
+        delete data.hostnameP;
+      }
+
+      const endpoint =
+        pcType === "portatili"
+          ? "http://localhost:5000/ticketp"
+          : "http://localhost:5000/ticketf";
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.status === 201) {
+          alert("Ticket inserito con successo!");
+        } else {
+          const error = await response.json();
+          alert("Errore: " + (error?.Error || "Errore generico"));
+        }
+      } catch (err) {
+        console.error("Errore nella richiesta:", err);
+        alert("Errore di rete durante l'invio.");
+      }
+    });
+  </script>
+</body>
+</html>
