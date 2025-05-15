@@ -4,13 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create User</title>
+    <title>Registrazione Utente</title>
     <link rel="stylesheet" href="styles/style.css">
     <style>
+        :root {
+            --primary-color: #4285f4;
+            --secondary-color: #34a853;
+            --error-color: #ea4335;
+            --success-color: #34a853;
+            --text-color: #333;
+            --bg-color: #f8f9fa;
+            --input-bg: #ffffff;
+            --border-color: #ced4da;
+        }
 
-        td:hover {
-            background-color: #e2e6ea;
-            color: #007bff;
+        .dark-mode {
+            --text-color: #f8f9fa;
+            --bg-color: #212529;
+            --input-bg: #343a40;
+            --border-color: #495057;
         }
 
         body {
@@ -18,70 +30,160 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         h1 {
             text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+
+        #registerForm {
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: var(--input-bg);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
             margin-bottom: 20px;
-        }
-
-        .dropdown-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 800px;
-            margin-top: 20px;
-        }
-
-        h4 {
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: #ff0000;
-        }
-
-        select {
-            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
             font-size: 16px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+        }
+
+        button {
             width: 100%;
-            border-radius: 5px;
-            box-sizing: border-box;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #3367d6;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        #errorMessage {
+            background-color: rgba(234, 67, 53, 0.1);
+            color: var(--error-color);
+        }
+
+        #successMessage {
+            background-color: rgba(52, 168, 83, 0.1);
+            color: var(--success-color);
+        }
+
+        .theme {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .theme__toggle {
+            width: 50px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 12px;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+
+        .theme__toggle.checked {
+            background-color: var(--primary-color);
+        }
+
+        .theme__toggle::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+
+        .theme__toggle.checked::after {
+            transform: translateX(26px);
+        }
+
+        @media (max-width: 600px) {
+            #registerForm {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 
 <body>
-
-
-    <label class="theme">
+    <label class="theme" title="Cambia tema">
         <div id="themeToggle" class="theme__toggle"></div>
     </label>
-    <h1>Create User</h1>
-<form id="registerForm">
-    <label for="username">Mail</label>
-    <input type="text" id="username" name="username" required />
-
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" required />
-
-    <label for="confirmPassword">Conferma Password</label>
-    <input type="password" id="confirmPassword" name="confirmPassword" required />
-    <label for="autorizzato">Autorizzato (0 o 1)</label>
-    <input type="number" id="autorizzato" name="autorizzato" min="0" max="1" required />
-
-
-    <button type="submit">Registrati</button>
-
-    <p id="errorMessage" style="color: red; display: none;"></p>
-    <p id="successMessage" style="color: green; display: none;"></p>
-</form>
-
+    
+    <h1>Registrazione Nuovo Utente</h1>
+    
+    <form id="registerForm">
+        <label for="username">Indirizzo Email</label>
+        <input type="email" id="username" name="username" required placeholder="esempio@dominio.com" />
+        
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="Almeno 8 caratteri" minlength="8" />
+        
+        <label for="confirmPassword">Conferma Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Ripeti la password" />
+        
+        <label for="autorizzato">Stato Autorizzazione</label>
+        <input type="number" id="autorizzato" name="autorizzato" min="0" max="1" required placeholder="0 o 1" />
+        
+        <button type="submit">Registra Utente</button>
+        
+        <div id="errorMessage" class="message"></div>
+        <div id="successMessage" class="message"></div>
+    </form>
 
     <script>
-
-        
-        // Gestione del tema
         document.addEventListener("DOMContentLoaded", () => {
+            // Gestione del tema
             const toggle = document.getElementById("themeToggle");
             const body = document.body;
             const savedTheme = localStorage.getItem("theme");
@@ -96,28 +198,44 @@
                 toggle.classList.toggle("checked");
                 localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
             });
-        });
-            document.getElementById("registerForm").addEventListener("submit", async function(event) {
-                event.preventDefault(); // Blocca invio predefinito
 
-                const email = document.getElementById("username").value;
+            // Gestione del form
+            const registerForm = document.getElementById("registerForm");
+            const errorMessage = document.getElementById("errorMessage");
+            const successMessage = document.getElementById("successMessage");
+
+            registerForm.addEventListener("submit", async function(event) {
+                event.preventDefault();
+
+                // Reset messaggi
+                errorMessage.style.display = "none";
+                successMessage.style.display = "none";
+
+                // Validazione client-side
+                const email = document.getElementById("username").value.trim();
                 const password = document.getElementById("password").value;
                 const confirmPassword = document.getElementById("confirmPassword").value;
                 const autorizzato = parseInt(document.getElementById("autorizzato").value);
-                const errorMessage = document.getElementById("errorMessage");
-                const successMessage = document.getElementById("successMessage");
+
+                // Validazione email
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    showError("Inserisci un indirizzo email valido.");
+                    return;
+                }
+
+                // Validazione password
+                if (password.length < 8) {
+                    showError("La password deve contenere almeno 8 caratteri.");
+                    return;
+                }
 
                 if (password !== confirmPassword) {
-                    errorMessage.textContent = "Le password non coincidono.";
-                    errorMessage.style.display = "block";
-                    successMessage.style.display = "none";
+                    showError("Le password non coincidono.");
                     return;
                 }
 
                 if (![0, 1].includes(autorizzato)) {
-                    errorMessage.textContent = "Il campo 'Autorizzato' deve essere 0 o 1.";
-                    errorMessage.style.display = "block";
-                    successMessage.style.display = "none";
+                    showError("Il campo 'Autorizzato' deve essere 0 o 1.");
                     return;
                 }
 
@@ -137,21 +255,27 @@
                     const data = await response.json();
 
                     if (response.ok) {
-                        errorMessage.style.display = "none";
-                        successMessage.textContent = "Utente registrato con successo!";
-                        successMessage.style.display = "block";
-                        document.getElementById("registerForm").reset(); // resetta il form
+                        showSuccess("Utente registrato con successo!");
+                        registerForm.reset();
                     } else {
-                        errorMessage.textContent = data.Error || "Utente già registrato.";
-                        errorMessage.style.display = "block";
-                        successMessage.style.display = "none";
+                        showError(data.Error || "Errore durante la registrazione. L'utente potrebbe già esistere.");
                     }
                 } catch (error) {
-                    errorMessage.textContent = "Errore nella comunicazione con il server.";
-                    errorMessage.style.display = "block";
-                    successMessage.style.display = "none";
+                    showError("Errore nella comunicazione con il server. Riprova più tardi.");
+                    console.error("Errore:", error);
                 }
             });
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = "block";
+            }
+
+            function showSuccess(message) {
+                successMessage.textContent = message;
+                successMessage.style.display = "block";
+            }
+        });
     </script>
 </body>
 
