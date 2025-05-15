@@ -84,7 +84,7 @@
       const hostnameLabel = document.getElementById("hostnameLabel");
       const hostnameInput = document.getElementById("hostname");
 
-      if (pcType === "portatili") {
+      if (pcType === "Box") {
         hostnameLabel.textContent = "HostnameP:";
         hostnameInput.name = "hostnameP";
       } else {
@@ -110,7 +110,7 @@
       data.creatore = user; // Prelevato da localStorage
       data.tecnico = null; // Tecnico non viene chiesto ora
 
-      if (pcType === "portatili") {
+      if (pcType === "Box") {
         data.hostnameP = selectedPc;
         delete data.hostnameF;
       } else {
@@ -119,7 +119,7 @@
       }
 
       const endpoint =
-        pcType === "portatili"
+        pcType === "Box"
           ? "http://localhost:5000/ticketp"
           : "http://localhost:5000/ticketf";
 
