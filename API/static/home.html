@@ -168,6 +168,13 @@
                     const decoded = jwt_decode(token);
                     const userId = decoded.user_id; // Ottieni user_id dai claims
                     localStorage.setItem("User", userId);
+                    // Ottieni l'email dal campo "sub" (identity=email nel backend)
+                    const userEmail = decoded.sub;
+
+                    // Salva l'email nel localStorage
+                    localStorage.setItem("UserEmail", userEmail);
+                    console.log(localStorage.getItem("UserEmail"));
+
                     // Verifica se l'ID dell'utente è 1 (amministratore)
                     if (userId === 1) {
                         // Mostra il pulsante "Crea Utente" solo se l'ID dell'utente è 1

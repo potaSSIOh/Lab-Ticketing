@@ -1,167 +1,233 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizza Ticket</title>
     <link rel="stylesheet" href="styles/style.css">
     <style>
-        table {
-            width: 90%;
-            margin: 20px auto;
-            border-collapse: collapse;
+        td:hover {
+            background-color: #e2e6ea;
+            color: #007bff;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
         }
         h1 {
             text-align: center;
             margin-bottom: 20px;
         }
-
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        input, select {
+        .dropdown-container {
+            display: flex;
+            justify-content: space-between;
             width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+        h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #ff0000;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 5px;
+            box-sizing: border-box;
         }
     </style>
-    <h1 id = "hostnameTitle" ></h1>
 </head>
-
 <body>
     <label class="theme">
         <div id="themeToggle" class="theme__toggle"></div>
     </label>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const token = localStorage.getItem("token");
-        const autorizzato = localStorage.getItem("autorizzato") === "1";
-        const hostname = localStorage.getItem("selectedPc");
-        const pcType = localStorage.getItem("PcType"); // "portatili" o "fissi"
-    
-        if (!token) {
-            window.location.href = "index.html";
-            return;
-        }
-    
-        const toggle = document.getElementById("themeToggle");
-        const body = document.body;
-        const savedTheme = localStorage.getItem("theme");
-    
-        if (savedTheme === "dark") {
-            body.classList.add("dark-mode");
-            toggle.classList.add("checked");
-        }
-    
-        toggle.addEventListener("click", () => {
-            body.classList.toggle("dark-mode");
-            toggle.classList.toggle("checked");
-            localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
-        });
-    
-        if (hostname) {
-            document.getElementById("hostnameTitle").textContent = `Hostname: ${hostname}`;
-        } else {
-            console.warn("Hostname non trovato nel localStorage");
-        }
-    
-        const ticketBody = document.getElementById("ticketBody");
-    
-        // Seleziona URL giusto in base a pcType
-        let apiUrl = "";
-        let hostnameField = "";
-    
-        if (pcType === "Box") {
-            apiUrl = "/ticketf";
-            hostnameField = "hostnameF";
-        } else if (pcType === "Aule") {
-            apiUrl = "/ticketp";
-            hostnameField = "hostnameP";
-        } else {
-            console.error("Valore di pcType non valido");
-            console.log(pcType);
-            return;
-        }
-    
-        // Effettua richiesta GET
-        fetch(apiUrl, {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Errore nella richiesta API");
-            }
-            return response.json();
-        })
-        .then(data => {
-            const filteredTickets = data.filter(ticket => ticket[hostnameField] === hostname);
-    
-            filteredTickets.forEach(ticket => {
-                const tr = document.createElement("tr");
-    
-                tr.innerHTML = `
-                    <td>${ticket.id}</td>
-                    <td>
-                        <input type="text" value="${ticket.descrizione}"
-                               onchange="updateTicket(${ticket.id}, 'descrizione', this.value)">
-                    </td>
-                    <td>${ticket.dataOra}</td>
-                    <td>${ticket.creatore}</td>
-                    <td>${ticket[hostnameField]}</td>
-                    <td>
-                        ${autorizzato ? `
-                            <input type="text" value="${ticket.tecnico}"
-                                   onchange="updateTicket(${ticket.id}, 'tecnico', this.value)">
-                        ` : ticket.tecnico}
-                    </td>
-                    <td>
-                        ${autorizzato ? `
-                            <select onchange="updateTicket(${ticket.id}, 'stato', this.value)">
-                                <option value="Aperto" ${ticket.stato === 'Aperto' ? 'selected' : ''}>Aperto</option>
-                                <option value="In lavorazione" ${ticket.stato === 'In lavorazione' ? 'selected' : ''}>In lavorazione</option>
-                                <option value="Chiuso" ${ticket.stato === 'Chiuso' ? 'selected' : ''}>Chiuso</option>
-                            </select>
-                        ` : ticket.stato}
-                    </td>
-                `;
-    
-                ticketBody.appendChild(tr);
-            });
-        })
-        .catch(error => {
-            console.error("Errore durante il recupero dei ticket:", error);
-        });
-    
-        // Funzione aggiornata per modifiche dinamiche
-        window.updateTicket = (idTicket, field, value) => {
-            let updateUrl;
-            if (field === "descrizione") {
-                updateUrl = `${apiUrl}/${idTicket}`;
-            } else {
-                updateUrl = `${apiUrl}/${idTicket}/${field}`;
-            }
-    
-            fetch(updateUrl, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({ [field]: value })
-            })
-            .then(res => res.json())
-            .then(data => console.log("Ticket aggiornato:", data))
-            .catch(err => console.error("Errore aggiornamento:", err));
-        };
-    });
-</script>
-</body>
+    <h1 id="hostnameTitle" style="text-align: center;"></h1>
 
+    <div id="ticketContainer">
+        <table id="ticketTable">
+            <thead>
+                <tr>
+                    <th>ID Ticket</th>
+                    <th>Descrizione</th>
+                    <th>Data/Ora</th>
+                    <th>Creatore</th>
+                    <th>Hostname</th>
+                    <th>Tecnico</th>
+                    <th>Stato</th>
+                </tr>
+            </thead>
+            <tbody id="ticketBody">
+                <!-- Ticket inseriti dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const token = localStorage.getItem("token");
+            const autorizzato = localStorage.getItem("autorizzato") === "1";
+            const hostname = localStorage.getItem("selectedPc");
+            const utenteCorrente = localStorage.getItem("utenteCorrente");
+            const pcType = localStorage.getItem("PcType");
+
+            if (!token) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            const toggle = document.getElementById("themeToggle");
+            const body = document.body;
+            const savedTheme = localStorage.getItem("theme");
+
+            if (savedTheme === "dark") {
+                body.classList.add("dark-mode");
+                toggle.classList.add("checked");
+            }
+
+            toggle.addEventListener("click", () => {
+                body.classList.toggle("dark-mode");
+                toggle.classList.toggle("checked");
+                localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+            });
+
+            if (hostname) {
+                document.getElementById("hostnameTitle").textContent = `Hostname: ${hostname}`;
+            } else {
+                console.warn("Hostname non trovato nel localStorage");
+            }
+
+            try {
+                // URL API ticket
+                let apiUrl = "";
+                if (pcType === "Box") {
+                    apiUrl = "http://127.0.0.1:5000/ticketp";
+                } else if (pcType === "Aule") {
+                    apiUrl = "http://127.0.0.1:5000/ticketf";
+                } else {
+                    console.error("Tipo di PC non valido in localStorage");
+                    return;
+                }
+
+                // Fetch tecnici autorizzati
+                const tecniciRes = await fetch("http://127.0.0.1:5000/utenti");
+                const tecniciAll = await tecniciRes.json();
+                const tecnici = tecniciAll.filter(t => t.autorizzato === 1);
+
+                // Fetch ticket
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error("Errore nel recupero dei dati");
+
+                const tickets = await response.json();
+
+                // Filtro ticket per hostname
+                const filteredTickets = tickets.filter(ticket =>
+                    ticket.hostnameF === hostname || ticket.hostnameP === hostname
+                );
+
+                const ticketBody = document.getElementById("ticketBody");
+
+                filteredTickets.forEach(ticket => {
+                    const tr = document.createElement("tr");
+
+                    tr.innerHTML = `
+                        <td>${ticket.IdTicket}</td>
+                        <td>
+                            ${ticket.creatore === utenteCorrente ? `
+                                <input type="text" value="${ticket.descrizione}"
+                                       onchange="updateTicket(${ticket.IdTicket}, 'descrizione', this.value)">
+                            ` : `
+                                <input type="text" value="${ticket.descrizione}" disabled>
+                            `}
+                        </td>
+                        <td>${ticket.dataOra}</td>
+                        <td>${ticket.creatore}</td>
+                        <td>${ticket.hostnameF || ticket.hostnameP}</td>
+<td>
+    ${autorizzato ? `
+        <select onchange="updateTicket(${ticket.IdTicket}, 'tecnico', this.value)">
+            <option value="" ${!ticket.tecnico ? 'selected' : ''}></option> <!-- Opzione vuota se tecnico è null, undefined o "" -->
+            ${tecnici.map(tech => `
+                <option value="${tech.name_mail}" ${tech.name_mail === ticket.tecnico ? 'selected' : ''}>
+                    ${tech.name_mail}
+                </option>
+            `).join('')}
+        </select>
+    ` : ticket.tecnico}
+</td>
+
+<td>
+    ${autorizzato ? `
+        <select onchange="updateTicket(${ticket.IdTicket}, 'stato', this.value)">
+            <option value="" ${!ticket.stato ? 'selected' : ''}></option> <!-- Opzione vuota se stato è null, undefined o "" -->
+            <option value="Aperto" ${ticket.stato === 'Aperto' ? 'selected' : ''}>Aperto</option>
+            <option value="In lavorazione" ${ticket.stato === 'In lavorazione' ? 'selected' : ''}>In lavorazione</option>
+            <option value="Chiuso" ${ticket.stato === 'Chiuso' ? 'selected' : ''}>Chiuso</option>
+        </select>
+    ` : ticket.stato}
+</td>
+
+                    `;
+
+                    ticketBody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error("Errore nel caricamento dei ticket:", error);
+            }
+
+            // Funzione per aggiornare un campo del ticket
+            window.updateTicket = async (idTicket, field, value) => {
+                try {
+                    let updateUrl = "";
+
+                    if (field === "tecnico") {
+                        if (pcType === "Box") {
+                            updateUrl = `http://127.0.0.1:5000/ticketp/${idTicket}/tecnico`;
+                        } else if (pcType === "Aule") {
+                            updateUrl = `http://127.0.0.1:5000/ticketf/${idTicket}/tecnico`;
+                        }
+                    } else if (field === "stato") {
+                        if (pcType === "Box") {
+                            updateUrl = `http://127.0.0.1:5000/ticketp/${idTicket}/stato`;
+                        } else if (pcType === "Aule") {
+                            updateUrl = `http://127.0.0.1:5000/ticketf/${idTicket}/stato`;
+                        }
+                    } else if (field === "descrizione") {
+                        if (pcType === "Box") {
+                            updateUrl = `http://127.0.0.1:5000/ticketp/${idTicket}`;
+                        } else if (pcType === "Aule") {
+                            updateUrl = `http://127.0.0.1:5000/ticketf/${idTicket}`;
+                        }
+                    }
+
+                    if (!updateUrl) {
+                        console.error("URL per aggiornamento non valido");
+                        return;
+                    }
+
+                    const response = await fetch(updateUrl, {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ [field]: value })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Errore nell'aggiornamento del ticket");
+                    }
+
+                    console.log(`Ticket ${idTicket} aggiornato: ${field} = ${value}`);
+                } catch (error) {
+                    console.error("Errore nell'aggiornamento del ticket:", error);
+                }
+            };
+        });
+    </script>
+</body>
 </html>

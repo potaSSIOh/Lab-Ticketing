@@ -13,6 +13,11 @@ def get_utenti():
     cursor.execute("SELECT * FROM utenti")
     return jsonify(cursor.fetchall()), 200
 
+@utenti_routes.route('/tecnici', methods=['GET'])
+def get_tecnici():
+    cursor = db.cursor()
+    cursor.execute("SELECT name_mail FROM utenti WHERE autorizzato = 1")
+    return jsonify(cursor.fetchall()), 200
 #-----------------------------------------------------
 
 @utenti_routes.route('/utenti', methods=['POST'])

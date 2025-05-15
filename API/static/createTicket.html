@@ -100,6 +100,7 @@
 
       const pcType = localStorage.getItem("PcType");
       const selectedPc = localStorage.getItem("selectedPc");
+      const UserMail = localStorage.getItem("UserEmail");
       const user = localStorage.getItem("User");
 
       const form = e.target;
@@ -107,7 +108,7 @@
       const data = Object.fromEntries(formData.entries());
 
       data.dataOra = new Date().toISOString(); // Format ISO
-      data.creatore = user; // Prelevato da localStorage
+      data.creatore = UserMail; // Prelevato da localStorage
       data.tecnico = null; // Tecnico non viene chiesto ora
 
       if (pcType === "Box") {
