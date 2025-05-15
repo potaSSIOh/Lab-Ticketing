@@ -4,359 +4,521 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Gestione Aule e Box</title>
     <link rel="stylesheet" href="styles/style.css">
     <style>
-        #top-right-button {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            z-index: 1000;
-        }
-        #bottom-button {
-            position: fixed;
-            top: 100px; /* Adjust to position below Log Out button */
-            right: 10px;
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            z-index: 1000;
-        }
-    
-        td:hover {
-            background-color: #e2e6ea;
-            color: #007bff;
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --background: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #212529;
+            --text-light: #6c757d;
+            --error: #dc3545;
+            --success: #28a745;
+            --border: #e9ecef;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.1);
         }
 
-        #top-right-button:hover {
-            background-color: #0056b3; 
+        .dark-mode {
+            --primary: #4895ef;
+            --primary-dark: #3a7bc8;
+            --background: #121212;
+            --card-bg: #1e1e1e;
+            --text: #f8f9fa;
+            --text-light: #adb5bd;
+            --border: #2d2d2d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.3);
         }
+
         body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
+            margin: 0;
             padding: 20px;
-            font-family: Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         h1 {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 2rem;
             text-align: center;
-            margin-bottom: 20px;
+            font-size: 2rem;
         }
 
+        h4 {
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* Dropdown styles */
         .dropdown-container {
             display: flex;
             justify-content: space-between;
             width: 100%;
             max-width: 800px;
             margin-top: 20px;
+            gap: 1.5rem;
         }
 
-        h4 {
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: #ff0000;
+        .dropdown-container > div {
+            flex: 1;
         }
 
         select {
-            padding: 10px;
-            font-size: 16px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
             width: 100%;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        .modal-forms-container {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .modal-forms-container form {
-            display: inline;
-        }
-
-        #btnInserisci, #btnVisualizza {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
             cursor: pointer;
         }
 
-        #btnInserisci:hover, #btnVisualizza:hover {
-            background-color: #0056b3;
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         }
 
+        /* Button styles */
+        .action-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #logout-button, #insert-ticket-button, #view-ticket-button {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        #create-user-button {
+            background-color: var(--success);
+            color: white;
+        }
+
+        #logout-button:hover, #insert-ticket-button:hover, #view-ticket-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        #create-user-button:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        #logout-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        #create-user-button {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        /* Grid styles */
+        #pc-grid-container {
+            margin-top: 2rem;
+            width: 100%;
+            max-width: 800px;
+            transition: all 0.3s ease;
+        }
+
+        .pc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .pc-item {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .pc-item:hover {
+            background-color: var(--border);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .pc-name {
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 16px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: var(--shadow-hover);
+            position: relative;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close-button:hover {
+            color: var(--error);
+        }
+
+        #hostname-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        .theme-toggle__switch {
+            width: 50px;
+            height: 26px;
+            background: var(--border);
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .theme-toggle__switch:after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .dark-mode .theme-toggle__switch {
+            background: var(--primary);
+        }
+
+        .dark-mode .theme-toggle__switch:after {
+            transform: translateX(24px);
+            background: var(--card-bg);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .dropdown-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .pc-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            
+            .modal-content {
+                width: 90%;
+                margin: 20% auto;
+                padding: 1.5rem;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            #logout-button, #create-user-button {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pc-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+            
+            .pc-item {
+                padding: 0.75rem 0.5rem;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <label class="theme">
-        <div id="themeToggle" class="theme__toggle"></div>
-    </label>
+    <div class="theme-toggle">
+        <div id="themeToggle" class="theme-toggle__switch"></div>
+    </div>
 
-    <h1>Welcome</h1>
+    <h1>Gestione Aule e Box</h1>
 
     <div class="dropdown-container">
-        <!-- Dropdown per le Aule -->
         <div>
             <h4>Aule</h4>
-            <select name="Aule" id="AuleList" onchange="handleChange('Aule')">
-                <option value="">Select Aule</option>
+            <select name="Aule" id="AuleList">
+                <option value="">Seleziona un'aula</option>
             </select>
         </div>
-
-        <!-- Dropdown per i Box -->
         <div>
             <h4>Box</h4>
-            <select name="Box" id="BoxList" onchange="handleChange('Box')">
-                <option value="">Select Box</option>
+            <select name="Box" id="BoxList">
+                <option value="">Seleziona un box</option>
             </select>
         </div>
     </div>
 
-    <button id="top-right-button" onclick="LogOut()">Log Out</button>
+    <button id="logout-button" class="action-button">Logout</button>
+    <button id="create-user-button" class="action-button">Crea Utente</button>
 
-    <button id="bottom-button" onclick="CreateUser()">Crea Utente</button>
-    <div id="table-container" style="margin-top: 30px; width: 100%; max-width: 800px;"></div>
+    <div id="pc-grid-container"></div>
 
-    <!-- Modale -->
-    <div id="miaModale" class="modale">
-        <div class="modale-content">
-            <span class="close">&times;</span>
-            <h1>TICKET</h1>
-            <p id="hostnameText"></p>
-
-            <div class="modal-forms-container">
-                <!-- inserimento da controllare (chiamata funzione js)-->
-                <form action="" method="post">
-                    <button id="btnInserisci">Inserisci ticket</button>
-                </form>
-
-                <form action="visualizzatoreTicket.html" target="_blank" method="get">
-                    <button id="btnVisualizza">Visualizza Ticket</button>
-                </form>
+    <!-- Modal per i ticket -->
+    <div id="ticketModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Gestione Ticket</h2>
+            <p id="hostname-display"></p>
+            <div class="modal-actions">
+                <button id="insert-ticket-button" class="action-button">Inserisci ticket</button>
+                <button id="view-ticket-button" class="action-button">Visualizza Ticket</button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
     <script>
-        // Verifica che l'utente sia loggato (token presente)
-        document.addEventListener("DOMContentLoaded", () => {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                // Se non c'è il token, manda alla pagina di login
-                window.location.href = "index.html";
-            } else {
-                try {
-                    // Decodifica il token JWT
-                    const decoded = jwt_decode(token);
-                    const userId = decoded.user_id; // Ottieni user_id dai claims
+        // Variabili globali
+        let hostname = "";
+        const token = localStorage.getItem("token");
 
-                    // Verifica se l'ID dell'utente è 1 (amministratore)
-                    if (userId === 1) {
-                        // Mostra il pulsante "Crea Utente" solo se l'ID dell'utente è 1
-                        document.getElementById("bottom-button").style.display = "block";
-                    } else {
-                        // Nascondi il pulsante "Crea Utente" per gli utenti che non hanno ID 1
-                        document.getElementById("bottom-button").style.display = "none";
-                    }
-                } catch (error) {
-                    console.error("Error decoding token:", error);
-                    window.location.href = "index.html";
-                }
-            }
+        // Inizializzazione della pagina
+        document.addEventListener("DOMContentLoaded", () => {
+            initTheme();
+            checkAuth();
+            setupEventListeners();
+            loadInitialData();
         });
 
-        hostname = "";
-        // gestione del tema
-        document.addEventListener("DOMContentLoaded", () => {
+        // Gestione del tema
+        function initTheme() {
             const toggle = document.getElementById("themeToggle");
             const body = document.body;
             const savedTheme = localStorage.getItem("theme");
 
             if (savedTheme === "dark") {
                 body.classList.add("dark-mode");
-                toggle.classList.add("checked");
             }
 
             toggle.addEventListener("click", () => {
                 body.classList.toggle("dark-mode");
-                toggle.classList.toggle("checked");
                 localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
             });
-        });
+        }
 
-        function LogOut() {
-            localStorage.removeItem("token");
-            localStorage.removeItem("selectedType");
-            localStorage.removeItem("selectedAule");
-            localStorage.removeItem("selectedBox");
-            localStorage.removeItem("selectedPc");
-            localStorage.removeItem("PcType");
+        // Verifica autenticazione e permessi
+        function checkAuth() {
+            if (!token) {
+                window.location.href = "index.html";
+                return;
+            }
+            
+            try {
+                const decoded = jwt_decode(token);
+                document.getElementById("create-user-button").style.display = decoded.user_id === 1 ? "block" : "none";
+            } catch (error) {
+                console.error("Error decoding token:", error);
+                window.location.href = "index.html";
+            }
+        }
+
+        // Setup degli event listeners
+        function setupEventListeners() {
+            // Dropdown
+            document.getElementById("AuleList").addEventListener("change", () => handleDropdownChange('Aule'));
+            document.getElementById("BoxList").addEventListener("change", () => handleDropdownChange('Box'));
+            
+            // Pulsanti
+            document.getElementById("logout-button").addEventListener("click", logout);
+            document.getElementById("create-user-button").addEventListener("click", createUser);
+            document.getElementById("insert-ticket-button").addEventListener("click", insertTicket);
+            document.getElementById("view-ticket-button").addEventListener("click", viewTicket);
+            
+            // Modal
+            document.querySelector(".close-button").addEventListener("click", () => {
+                document.getElementById("ticketModal").style.display = 'none';
+            });
+        }
+
+        // Caricamento dati iniziali
+        function loadInitialData() {
+            fetchData('http://localhost:5000/aule', 'AuleList');
+            fetchData('http://localhost:5000/box', 'BoxList');
+        }
+
+        // Funzioni principali
+        function logout() {
+            localStorage.clear();
             window.location.href = "index.html";
         }
 
-        // Funzione per gestire i cambi dei valori del dropdown (Aule/Box)
-        function handleChange(type) {
-            const listElement = type === 'Aule' ? document.getElementById('AuleList') : document.getElementById('BoxList');
+        function createUser() {
+            window.open("/static/createUser.html", "_blank");
+        }
+
+        function insertTicket() {
+            // Implementa la logica per inserire un ticket
+            alert("Funzionalità di inserimento ticket");
+        }
+
+        function viewTicket() {
+            window.open("visualizzatoreTicket.html", "_blank");
+        }
+
+        function handleDropdownChange(type) {
+            const listElement = document.getElementById(`${type}List`);
             const selectedValue = listElement.value;
 
-            // Pulizia dropdown opposto
-            if (type === 'Aule') {
-                document.getElementById('BoxList').value = "";
-            } else {
-                document.getElementById('AuleList').value = "";
-            }
+            // Resetta l'altro dropdown
+            const otherType = type === 'Aule' ? 'Box' : 'Aule';
+            document.getElementById(`${otherType}List`).value = "";
 
             if (selectedValue) {
-                // Salva in localStorage
                 localStorage.setItem('selectedType', type);
                 localStorage.setItem(`selected${type}`, selectedValue);
-
-                // Carica i dettagli
                 loadDetails(type, selectedValue);
             }
         }
 
-            function CreateUser() {
-                window.open("/static/createUser.html", "_blank");
-            }
-
-        // Carico i dati(Aule o Box)
         async function loadDetails(type, value) {
             const url = `http://localhost:5000/${type === 'Aule' ? 'fissi' : 'portatili'}/${value}`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                const container = document.getElementById('table-container');
-                container.innerHTML = ""; // Cancello il contenuto di prima
+                const container = document.getElementById('pc-grid-container');
+                container.innerHTML = "";
                 
                 if (!data || data.length === 0) {
-                    container.innerHTML = `<p>Nessun dato disponibile per il ${type} selezionato.</p>`;
+                    container.innerHTML = `<p>Nessun dato disponibile per ${type === 'Aule' ? 'l\'aula' : 'il box'} selezionato.</p>`;
                     return;
                 }
 
-                // Struttura della tabella
-                const table = document.createElement("table");
-                table.style.borderCollapse = "collapse";
-                table.style.width = "100%";
-                const thead = document.createElement("thead");
-                const headerRow = document.createElement("tr");
-                const th = document.createElement("th");
-                th.textContent = "Hostnames";
-                th.style.padding = "10px";
-                headerRow.appendChild(th);
-                thead.appendChild(headerRow);
-                table.appendChild(thead);
-
-                const tbody = document.createElement("tbody");
-                let dataRow = document.createElement("tr");
-                const modale = document.getElementById('miaModale');
-                const testoModale = document.getElementById('testoModale');
-                const chiudi = document.querySelector('.close');
-
-                data.forEach((item, index) => {
-                    const td = document.createElement("td");
-                    td.textContent = item.HostName || item.hostname;
-                    hostname = td.textContent;
-                    td.style.border = "1px solid #ccc";
-                    td.style.padding = "10px";
-                    
-                      // Per chiudere la modale
-                      chiudi.onclick = function() {
-                        modale.style.display = 'none';
-                      }
-
-                    dataRow.appendChild(td);
-
-                    if ((index + 1) % 6 === 0) {
-                        tbody.appendChild(dataRow);
-                        dataRow = document.createElement("tr");
-                    }
-                });
-
-                tbody.addEventListener('click', function(event) {
-                    let target = event.target;
-                    hostname = target.textContent;
-
-                    const pcType = type;
-                    localStorage.setItem('PcType', pcType);
-                    localStorage.setItem('selectedPc', hostname);
-
-                    console.log("PcType:", pcType);
-                    console.log("Selected Hostname:", hostname);
-
-                    while (target && target.nodeName !== 'TR') {
-                        target = target.parentElement;
-                    }
-
-                    if (target) {
-                        const celle = target.getElementsByTagName('td');
-                        if (celle.length > 0) {
-                            const hostnameText = document.getElementById('hostnameText');
-                            hostnameText.textContent = "Hostname PC :" + hostname;
-                            modale.style.display = 'block';
-                        }
-                    }
-                });
-
-                if (dataRow.children.length > 0) tbody.appendChild(dataRow);
-
-                table.appendChild(tbody);
-                container.appendChild(table);
+                const grid = createPcGrid(data);
+                container.appendChild(grid);
             } catch (error) {
-                document.getElementById('table-container').innerHTML = `<p>Errore nel caricamento dei dati per ${type}.</p>`;
-                console.log(error);
+                document.getElementById('pc-grid-container').innerHTML = `<p>Errore nel caricamento dei dati.</p>`;
+                console.error("Error loading details:", error);
             }
         }
 
-        // Fetch dei dati per Aule e Box
-        function initializeData() {
-            const fetchData = async (url, listId) => {
-                try {
-                    const response = await fetch(url, {
-                        method: 'GET',
-                        mode: 'cors',
-                        headers: {
-                          'Content-Type': 'application/json'
-                        }
-                      });
-                    const data = await response.json();
-                    const list = document.getElementById(listId);
+        function createPcGrid(data) {
+            const grid = document.createElement("div");
+            grid.className = "pc-grid";
 
-                    data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.nAula || item.codBox;
-                        option.textContent = item.nAula || item.codBox;
-                        list.appendChild(option);
-                    });
-                } catch (error) {
-                    console.error('Error fetching initial data:', error);
-                }
-            };
+            data.forEach(item => {
+                const pcItem = document.createElement("div");
+                pcItem.className = "pc-item";
+                pcItem.innerHTML = `<div class="pc-name">${item.HostName || item.hostname}</div>`;
+                
+                pcItem.addEventListener('click', () => {
+                    hostname = item.HostName || item.hostname;
+                    const type = localStorage.getItem('selectedType');
+                    localStorage.setItem('PcType', type);
+                    localStorage.setItem('selectedPc', hostname);
+                    
+                    document.getElementById('hostname-display').textContent = `Hostname: ${hostname}`;
+                    document.getElementById('ticketModal').style.display = 'block';
+                });
 
-            fetchData('http://localhost:5000/aule', 'AuleList');
-            fetchData('http://localhost:5000/box', 'BoxList');
+                grid.appendChild(pcItem);
+            });
+
+            return grid;
         }
 
-        initializeData();
+        async function fetchData(url, listId) {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const list = document.getElementById(listId);
+                
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.nAula || item.codBox;
+                    option.textContent = item.nAula || item.codBox;
+                    list.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
     </script>
 </body>
-
 </html>
