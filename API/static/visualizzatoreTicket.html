@@ -7,32 +7,55 @@
     <title>Visualizza Ticket</title>
     <link rel="stylesheet" href="styles/style.css">
     <style>
-        table {
-            width: 90%;
-            margin: 20px auto;
-            border-collapse: collapse;
+        td:hover {
+            background-color: #e2e6ea;
+            color: #007bff;
         }
 
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
         }
 
-        th {
-            background-color: #f2f2f2;
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
-        input, select {
+        .dropdown-container {
+            display: flex;
+            justify-content: space-between;
             width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+
+        h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #ff0000;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 5px;
+            box-sizing: border-box;
         }
     </style>
 </head>
 
 <body>
     <script>
+        // Simula l'utente loggato
         localStorage.setItem("token", "tuoToken");
         localStorage.setItem("autorizzato", "1");
         localStorage.setItem("selectedPc", "nomePC123");
+        localStorage.setItem("utenteCorrente", "Mario");
     </script>
 
     <label class="theme">
@@ -62,8 +85,9 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const token = localStorage.getItem("token");
-            const autorizzato = localStorage.getItem("autorizzato") === "1"; // Converti in boolean
+            const autorizzato = localStorage.getItem("autorizzato") === "1";
             const hostname = localStorage.getItem("selectedPc");
+            const utenteCorrente = localStorage.getItem("utenteCorrente");
 
             if (!token) {
                 window.location.href = "index.html";
@@ -91,7 +115,7 @@
                 console.warn("Hostname non trovato nel localStorage");
             }
 
-            // Simulazione fetch dei ticket associati all'hostname
+            // Simulazione fetch dei ticket
             const tickets = [
                 {
                     idTicket: 1,
@@ -121,8 +145,12 @@
                 tr.innerHTML = `
                     <td>${ticket.idTicket}</td>
                     <td>
-                        <input type="text" value="${ticket.descrizione}"
-                               onchange="updateTicket(${ticket.idTicket}, 'descrizione', this.value)">
+                        ${ticket.creatore === utenteCorrente ? `
+                            <input type="text" value="${ticket.descrizione}"
+                                   onchange="updateTicket(${ticket.idTicket}, 'descrizione', this.value)">
+                        ` : `
+                            <input type="text" value="${ticket.descrizione}" disabled>
+                        `}
                     </td>
                     <td>${ticket.dataOra}</td>
                     <td>${ticket.creatore}</td>
@@ -147,7 +175,6 @@
                 ticketBody.appendChild(tr);
             });
 
-            // Funzione simulata per aggiornare il ticket (da collegare al backend reale)
             window.updateTicket = (idTicket, field, value) => {
                 console.log(`Aggiorno ticket ${idTicket}: ${field} = ${value}`);
                 // fetch(`/api/tickets/${idTicket}`, {
