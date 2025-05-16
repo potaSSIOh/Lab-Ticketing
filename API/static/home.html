@@ -314,211 +314,265 @@
 </head>
 
 <body>
-    <div class="theme-toggle">
-        <div id="themeToggle" class="theme-toggle__switch"></div>
-    </div>
+    <label class="theme">
+        <div id="themeToggle" class="theme__toggle"></div>
+    </label>
 
-    <h1>Gestione Aule e Box</h1>
+    <h1>Welcome</h1>
 
     <div class="dropdown-container">
+        <!-- Dropdown per le Aule -->
         <div>
             <h4>Aule</h4>
-            <select name="Aule" id="AuleList">
-                <option value="">Seleziona un'aula</option>
+            <select name="Aule" id="AuleList" onchange="handleChange('Aule')">
+                <option value="">Select Aule</option>
             </select>
         </div>
+
+        <!-- Dropdown per i Box -->
         <div>
             <h4>Box</h4>
-            <select name="Box" id="BoxList">
-                <option value="">Seleziona un box</option>
+            <select name="Box" id="BoxList" onchange="handleChange('Box')">
+                <option value="">Select Box</option>
             </select>
         </div>
     </div>
 
-    <button id="logout-button" class="action-button">Logout</button>
-    <button id="create-user-button" class="action-button">Crea Utente</button>
+    <button id="top-right-button" onclick="LogOut()">Log Out</button>
 
-    <div id="pc-grid-container"></div>
+    <button id="bottom-button" onclick="CreateUser()">Crea Utente</button>
+    <div id="table-container" style="margin-top: 30px; width: 100%; max-width: 800px;"></div>
 
-    <!-- Modal per i ticket -->
-    <div id="ticketModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>Gestione Ticket</h2>
-            <p id="hostname-display"></p>
-            <div class="modal-actions">
-                <button id="insert-ticket-button" class="action-button">Inserisci ticket</button>
-                <button id="view-ticket-button" class="action-button">Visualizza Ticket</button>
+    <!-- Modale -->
+    <div id="miaModale" class="modale">
+        <div class="modale-content">
+            <span class="close">&times;</span>
+            <h1>TICKET</h1>
+            <p id="hostnameText"></p>
+
+            <div class="modal-forms-container">
+                <!-- inserimento da controllare (chiamata funzione js)-->
+                <form action="/static/createTicket.html" target="_blank" method="get">
+                    <button id="btnInserisci">Inserisci ticket</button>
+                </form>
+
+                <form action="/static/visualizzatoreTicket.html" target="_blank" method="get">
+                    <button id="btnVisualizza">Visualizza Ticket</button>
+                </form>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
     <script>
-        // Variabili globali
-        let hostname = "";
-        const token = localStorage.getItem("token");
-
-        // Inizializzazione della pagina
+        // Verifica che l'utente sia loggato (token presente)
         document.addEventListener("DOMContentLoaded", () => {
-            initTheme();
-            checkAuth();
-            setupEventListeners();
-            loadInitialData();
+            const token = localStorage.getItem("token");
+            if (!token) {
+                // Se non c'è il token, manda alla pagina di login
+                window.location.href = "index.html";
+            } else {
+                try {
+                    // Decodifica il token JWT
+                    const decoded = jwt_decode(token);
+                    const userId = decoded.user_id; // Ottieni user_id dai claims
+                    localStorage.setItem("User", userId);
+                    // Ottieni l'email dal campo "sub" (identity=email nel backend)
+                    const userEmail = decoded.sub;
+
+                    // Salva l'email nel localStorage
+                    localStorage.setItem("UserEmail", userEmail);
+                    console.log(localStorage.getItem("UserEmail"));
+
+                    // Verifica se l'ID dell'utente è 1 (amministratore)
+                    if (userId === 1) {
+                        // Mostra il pulsante "Crea Utente" solo se l'ID dell'utente è 1
+                        document.getElementById("bottom-button").style.display = "block";
+                    } else {
+                        // Nascondi il pulsante "Crea Utente" per gli utenti che non hanno ID 1
+                        document.getElementById("bottom-button").style.display = "none";
+                    }
+                } catch (error) {
+                    console.error("Error decoding token:", error);
+                    window.location.href = "index.html";
+                }
+            }
         });
 
-        // Gestione del tema
-        function initTheme() {
+        hostname = "";
+        // gestione del tema
+        document.addEventListener("DOMContentLoaded", () => {
             const toggle = document.getElementById("themeToggle");
             const body = document.body;
             const savedTheme = localStorage.getItem("theme");
 
             if (savedTheme === "dark") {
                 body.classList.add("dark-mode");
+                toggle.classList.add("checked");
             }
 
             toggle.addEventListener("click", () => {
                 body.classList.toggle("dark-mode");
+                toggle.classList.toggle("checked");
                 localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
             });
-        }
+        });
 
-        // Verifica autenticazione e permessi
-        function checkAuth() {
-            if (!token) {
-                window.location.href = "index.html";
-                return;
-            }
-            
-            try {
-                const decoded = jwt_decode(token);
-                document.getElementById("create-user-button").style.display = decoded.user_id === 1 ? "block" : "none";
-            } catch (error) {
-                console.error("Error decoding token:", error);
-                window.location.href = "index.html";
-            }
-        }
-
-        // Setup degli event listeners
-        function setupEventListeners() {
-            // Dropdown
-            document.getElementById("AuleList").addEventListener("change", () => handleDropdownChange('Aule'));
-            document.getElementById("BoxList").addEventListener("change", () => handleDropdownChange('Box'));
-            
-            // Pulsanti
-            document.getElementById("logout-button").addEventListener("click", logout);
-            document.getElementById("create-user-button").addEventListener("click", createUser);
-            document.getElementById("insert-ticket-button").addEventListener("click", insertTicket);
-            document.getElementById("view-ticket-button").addEventListener("click", viewTicket);
-            
-            // Modal
-            document.querySelector(".close-button").addEventListener("click", () => {
-                document.getElementById("ticketModal").style.display = 'none';
-            });
-        }
-
-        // Caricamento dati iniziali
-        function loadInitialData() {
-            fetchData('http://localhost:5000/aule', 'AuleList');
-            fetchData('http://localhost:5000/box', 'BoxList');
-        }
-
-        // Funzioni principali
-        function logout() {
-            localStorage.clear();
+        function LogOut() {
+            localStorage.removeItem("token");
+            localStorage.removeItem("selectedType");
+            localStorage.removeItem("selectedAule");
+            localStorage.removeItem("selectedBox");
+            localStorage.removeItem("selectedPc");
+            localStorage.removeItem("PcType");
             window.location.href = "index.html";
         }
 
-        function createUser() {
-            window.open("/static/createUser.html", "_blank");
-        }
-
-        function insertTicket() {
-            // Implementa la logica per inserire un ticket
-            alert("Funzionalità di inserimento ticket");
-        }
-
-        function viewTicket() {
-            window.open("visualizzatoreTicket.html", "_blank");
-        }
-
-        function handleDropdownChange(type) {
-            const listElement = document.getElementById(`${type}List`);
+        // Funzione per gestire i cambi dei valori del dropdown (Aule/Box)
+        function handleChange(type) {
+            const listElement = type === 'Aule' ? document.getElementById('AuleList') : document.getElementById('BoxList');
             const selectedValue = listElement.value;
 
-            // Resetta l'altro dropdown
-            const otherType = type === 'Aule' ? 'Box' : 'Aule';
-            document.getElementById(`${otherType}List`).value = "";
+            // Pulizia dropdown opposto
+            if (type === 'Aule') {
+                document.getElementById('BoxList').value = "";
+            } else {
+                document.getElementById('AuleList').value = "";
+            }
 
             if (selectedValue) {
+                // Salva in localStorage
                 localStorage.setItem('selectedType', type);
                 localStorage.setItem(`selected${type}`, selectedValue);
+
+                // Carica i dettagli
                 loadDetails(type, selectedValue);
             }
         }
 
+            function CreateUser() {
+                window.open("/static/createUser.html", "_blank");
+            }
+
+        // Carico i dati(Aule o Box)
         async function loadDetails(type, value) {
             const url = `http://localhost:5000/${type === 'Aule' ? 'fissi' : 'portatili'}/${value}`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                const container = document.getElementById('pc-grid-container');
-                container.innerHTML = "";
+                const container = document.getElementById('table-container');
+                container.innerHTML = ""; // Cancello il contenuto di prima
                 
                 if (!data || data.length === 0) {
-                    container.innerHTML = `<p>Nessun dato disponibile per ${type === 'Aule' ? 'l\'aula' : 'il box'} selezionato.</p>`;
+                    container.innerHTML = `<p>Nessun dato disponibile per il ${type} selezionato.</p>`;
                     return;
                 }
 
-                const grid = createPcGrid(data);
-                container.appendChild(grid);
-            } catch (error) {
-                document.getElementById('pc-grid-container').innerHTML = `<p>Errore nel caricamento dei dati.</p>`;
-                console.error("Error loading details:", error);
-            }
-        }
+                // Struttura della tabella
+                const table = document.createElement("table");
+                table.style.borderCollapse = "collapse";
+                table.style.width = "100%";
+                const thead = document.createElement("thead");
+                const headerRow = document.createElement("tr");
+                const th = document.createElement("th");
+                th.textContent = "Hostnames";
+                th.style.padding = "10px";
+                headerRow.appendChild(th);
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
 
-        function createPcGrid(data) {
-            const grid = document.createElement("div");
-            grid.className = "pc-grid";
+                const tbody = document.createElement("tbody");
+                let dataRow = document.createElement("tr");
+                const modale = document.getElementById('miaModale');
+                const testoModale = document.getElementById('testoModale');
+                const chiudi = document.querySelector('.close');
 
-            data.forEach(item => {
-                const pcItem = document.createElement("div");
-                pcItem.className = "pc-item";
-                pcItem.innerHTML = `<div class="pc-name">${item.HostName || item.hostname}</div>`;
-                
-                pcItem.addEventListener('click', () => {
-                    hostname = item.HostName || item.hostname;
-                    const type = localStorage.getItem('selectedType');
-                    localStorage.setItem('PcType', type);
-                    localStorage.setItem('selectedPc', hostname);
+                data.forEach((item, index) => {
+                    const td = document.createElement("td");
+                    td.textContent = item.HostName || item.hostname;
+                    hostname = td.textContent;
+                    td.style.border = "1px solid #ccc";
+                    td.style.padding = "10px";
                     
-                    document.getElementById('hostname-display').textContent = `Hostname: ${hostname}`;
-                    document.getElementById('ticketModal').style.display = 'block';
+                      // Per chiudere la modale
+                      chiudi.onclick = function() {
+                        modale.style.display = 'none';
+                      }
+
+                    dataRow.appendChild(td);
+
+                    if ((index + 1) % 6 === 0) {
+                        tbody.appendChild(dataRow);
+                        dataRow = document.createElement("tr");
+                    }
                 });
 
-                grid.appendChild(pcItem);
-            });
+                tbody.addEventListener('click', function(event) {
+                    let target = event.target;
+                    hostname = target.textContent;
 
-            return grid;
-        }
+                    const pcType = type;
+                    localStorage.setItem('PcType', pcType);
+                    localStorage.setItem('selectedPc', hostname);
 
-        async function fetchData(url, listId) {
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                const list = document.getElementById(listId);
-                
-                data.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item.nAula || item.codBox;
-                    option.textContent = item.nAula || item.codBox;
-                    list.appendChild(option);
+                    console.log("PcType:", pcType);
+                    console.log("Selected Hostname:", hostname);
+
+                    while (target && target.nodeName !== 'TR') {
+                        target = target.parentElement;
+                    }
+
+                    if (target) {
+                        const celle = target.getElementsByTagName('td');
+                        if (celle.length > 0) {
+                            const hostnameText = document.getElementById('hostnameText');
+                            hostnameText.textContent = "Hostname PC :" + hostname;
+                            modale.style.display = 'block';
+                        }
+                    }
                 });
+
+                if (dataRow.children.length > 0) tbody.appendChild(dataRow);
+
+                table.appendChild(tbody);
+                container.appendChild(table);
             } catch (error) {
-                console.error('Error fetching data:', error);
+                document.getElementById('table-container').innerHTML = `<p>Errore nel caricamento dei dati per ${type}.</p>`;
+                console.log(error);
             }
         }
+
+        // Fetch dei dati per Aule e Box
+        function initializeData() {
+            const fetchData = async (url, listId) => {
+                try {
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        mode: 'cors',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        }
+                      });
+                    const data = await response.json();
+                    const list = document.getElementById(listId);
+
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.nAula || item.codBox;
+                        option.textContent = item.nAula || item.codBox;
+                        list.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Error fetching initial data:', error);
+                }
+            };
+
+            fetchData('http://localhost:5000/aule', 'AuleList');
+            fetchData('http://localhost:5000/box', 'BoxList');
+        }
+
+        initializeData();
     </script>
 </body>
+
 </html>
