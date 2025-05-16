@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +10,10 @@
             background-color: #e2e6ea;
             color: #007bff;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> visualizzatorePC
         body {
             display: flex;
             flex-direction: column;
@@ -19,12 +21,18 @@
             padding: 20px;
             font-family: Arial, sans-serif;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> visualizzatorePC
         h1 {
             text-align: center;
             margin-bottom: 20px;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> visualizzatorePC
         .dropdown-container {
             display: flex;
             justify-content: space-between;
@@ -32,13 +40,19 @@
             max-width: 800px;
             margin-top: 20px;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> visualizzatorePC
         h4 {
             margin-bottom: 10px;
             font-size: 18px;
             color: #ff0000;
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> visualizzatorePC
         select {
             padding: 10px;
             font-size: 16px;
@@ -48,7 +62,6 @@
         }
     </style>
 </head>
-
 <body>
     <script>
         // Simula l'utente loggato
@@ -83,11 +96,19 @@
     </div>
 
     <script>
+<<<<<<< HEAD
         document.addEventListener("DOMContentLoaded", () => {
+=======
+        document.addEventListener("DOMContentLoaded", async () => {
+>>>>>>> visualizzatorePC
             const token = localStorage.getItem("token");
             const autorizzato = localStorage.getItem("autorizzato") === "1";
             const hostname = localStorage.getItem("selectedPc");
             const utenteCorrente = localStorage.getItem("utenteCorrente");
+<<<<<<< HEAD
+=======
+            const pcType = localStorage.getItem("PcType");
+>>>>>>> visualizzatorePC
 
             if (!token) {
                 window.location.href = "index.html";
@@ -115,6 +136,7 @@
                 console.warn("Hostname non trovato nel localStorage");
             }
 
+<<<<<<< HEAD
             // Simulazione fetch dei ticket
             const tickets = [
                 {
@@ -187,6 +209,133 @@
                 // })
                 // .then(res => res.json())
                 // .then(data => console.log("Ticket aggiornato", data));
+=======
+            try {
+                // URL API ticket
+                let apiUrl = "";
+                if (pcType === "Box") {
+                    apiUrl = "http://127.0.0.1:5000/ticketp";
+                } else if (pcType === "Aule") {
+                    apiUrl = "http://127.0.0.1:5000/ticketf";
+                } else {
+                    console.error("Tipo di PC non valido in localStorage");
+                    return;
+                }
+
+                // Fetch tecnici autorizzati
+                const tecniciRes = await fetch("http://127.0.0.1:5000/utenti");
+                const tecniciAll = await tecniciRes.json();
+                const tecnici = tecniciAll.filter(t => t.autorizzato === 1);
+
+                // Fetch ticket
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error("Errore nel recupero dei dati");
+
+                const tickets = await response.json();
+
+                // Filtro ticket per hostname
+                const filteredTickets = tickets.filter(ticket =>
+                    ticket.hostnameF === hostname || ticket.hostnameP === hostname
+                );
+
+                const ticketBody = document.getElementById("ticketBody");
+
+                filteredTickets.forEach(ticket => {
+                    const tr = document.createElement("tr");
+
+                    tr.innerHTML = `
+                        <td>${ticket.IdTicket}</td>
+                        <td>
+                            ${ticket.creatore === utenteCorrente ? `
+                                <input type="text" value="${ticket.descrizione}"
+                                       onchange="updateTicket(${ticket.IdTicket}, 'descrizione', this.value)">
+                            ` : `
+                                <input type="text" value="${ticket.descrizione}" disabled>
+                            `}
+                        </td>
+                        <td>${ticket.dataOra}</td>
+                        <td>${ticket.creatore}</td>
+                        <td>${ticket.hostnameF || ticket.hostnameP}</td>
+<td>
+    ${autorizzato ? `
+        <select onchange="updateTicket(${ticket.IdTicket}, 'tecnico', this.value)">
+            <option value="" ${!ticket.tecnico ? 'selected' : ''}></option> <!-- Opzione vuota se tecnico è null, undefined o "" -->
+            ${tecnici.map(tech => `
+                <option value="${tech.name_mail}" ${tech.name_mail === ticket.tecnico ? 'selected' : ''}>
+                    ${tech.name_mail}
+                </option>
+            `).join('')}
+        </select>
+    ` : ticket.tecnico}
+</td>
+
+<td>
+    ${autorizzato ? `
+        <select onchange="updateTicket(${ticket.IdTicket}, 'stato', this.value)">
+            <option value="" ${!ticket.stato ? 'selected' : ''}></option> <!-- Opzione vuota se stato è null, undefined o "" -->
+            <option value="Aperto" ${ticket.stato === 'Aperto' ? 'selected' : ''}>Aperto</option>
+            <option value="In lavorazione" ${ticket.stato === 'In lavorazione' ? 'selected' : ''}>In lavorazione</option>
+            <option value="Chiuso" ${ticket.stato === 'Chiuso' ? 'selected' : ''}>Chiuso</option>
+        </select>
+    ` : ticket.stato}
+</td>
+
+                    `;
+
+                    ticketBody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error("Errore nel caricamento dei ticket:", error);
+            }
+
+            // Funzione per aggiornare un campo del ticket
+            window.updateTicket = async (idTicket, field, value) => {
+                try {
+                    let updateUrl = "";
+
+                    if (field === "tecnico") {
+                        if (pcType === "Box") {
+                            updateUrl = `http://127.0.0.1:5000/ticketp/${idTicket}/tecnico`;
+                        } else if (pcType === "Aule") {
+                            updateUrl = `http://127.0.0.1:5000/ticketf/${idTicket}/tecnico`;
+                        }
+                    } else if (field === "stato") {
+                        if (pcType === "Box") {
+                            updateUrl = `http://127.0.0.1:5000/ticketp/${idTicket}/stato`;
+                        } else if (pcType === "Aule") {
+                            updateUrl = `http://127.0.0.1:5000/ticketf/${idTicket}/stato`;
+                        }
+                    } else if (field === "descrizione") {
+                        if (pcType === "Box") {
+                            updateUrl = `http://127.0.0.1:5000/ticketp/${idTicket}`;
+                        } else if (pcType === "Aule") {
+                            updateUrl = `http://127.0.0.1:5000/ticketf/${idTicket}`;
+                        }
+                    }
+
+                    if (!updateUrl) {
+                        console.error("URL per aggiornamento non valido");
+                        return;
+                    }
+
+                    const response = await fetch(updateUrl, {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ [field]: value })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Errore nell'aggiornamento del ticket");
+                    }
+
+                    console.log(`Ticket ${idTicket} aggiornato: ${field} = ${value}`);
+                } catch (error) {
+                    console.error("Errore nell'aggiornamento del ticket:", error);
+                }
+>>>>>>> visualizzatorePC
             };
         });
     </script>
