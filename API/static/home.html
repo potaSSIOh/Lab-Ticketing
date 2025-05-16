@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestione Aule e Box</title>
+    <title>Home</title>
     <link rel="stylesheet" href="styles/style.css">
     <style>
         :root {
@@ -127,7 +127,7 @@
         #logout-button {
             position: fixed;
             top: 20px;
-            right: 20px;
+            right: 10px;
             z-index: 1000;
         }
 
@@ -338,9 +338,10 @@
         </div>
     </div>
 
-    <button id="top-right-button" onclick="LogOut()">Log Out</button>
+    <button id="logout-button" onclick="LogOut()">Log Out</button>
 
-    <button id="bottom-button" onclick="CreateUser()">Crea Utente</button>
+    <button id="create-user-button" onclick="CreateUser()">Crea Utente</button>
+    
     <div id="table-container" style="margin-top: 30px; width: 100%; max-width: 800px;"></div>
 
     <!-- Modale -->
@@ -387,10 +388,10 @@
                     // Verifica se l'ID dell'utente è 1 (amministratore)
                     if (userId === 1) {
                         // Mostra il pulsante "Crea Utente" solo se l'ID dell'utente è 1
-                        document.getElementById("bottom-button").style.display = "block";
+                        document.getElementById("create-user-button").style.display = "block";
                     } else {
                         // Nascondi il pulsante "Crea Utente" per gli utenti che non hanno ID 1
-                        document.getElementById("bottom-button").style.display = "none";
+                        document.getElementById("create-user-button").style.display = "none";
                     }
                 } catch (error) {
                     console.error("Error decoding token:", error);
