@@ -1,12 +1,12 @@
 from flask import Blueprint, request, jsonify, make_response
-
-from db import db
+from db import get_db_connection
 
 aule_routes = Blueprint('aule_routes', __name__)
 
 @aule_routes.route('/aule', methods=['GET'])
 def get_aule():
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute("SELECT * FROM aule")
     return jsonify(cursor.fetchall()), 200
 
@@ -14,6 +14,7 @@ def get_aule():
 
 @aule_routes.route('/aule', methods=['POST'])
 def add_aula():
+    conn = get_db_connection()
     data = request.get_json()
     try:
         nAula = data["nAula"]
@@ -21,10 +22,10 @@ def add_aula():
     except KeyError as e:
         return make_response(jsonify({"Error": f"Campo mancante: {str(e)}"}), 400)
 
-    cursor = db.cursor()
+    cursor = conn.cursor()
     sql = "INSERT INTO aule (nAula, Lab) VALUES (%s, %s)"
     cursor.execute(sql, (nAula, Lab))
-    db.commit()
+    conn.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "risorsa non inserita"}), 403)

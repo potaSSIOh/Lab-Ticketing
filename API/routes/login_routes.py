@@ -1,9 +1,8 @@
 from flask import Blueprint, request, jsonify
 from flask_cors import cross_origin
-from db import db
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
-from werkzeug.security import check_password_hash
+from db import get_db_connection
 
 login_routes = Blueprint('login_routes', __name__)
 
@@ -33,7 +32,8 @@ def login():
         return jsonify({"status": "fail", "message": "Invalid credentials"}), 401
 
 def check_user(name_mail, password):
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute("SELECT id, name_mail, password FROM utenti WHERE name_mail=%s", (name_mail,))
     user = cursor.fetchone()
     cursor.close()

@@ -1,13 +1,14 @@
 from flask import Blueprint, request, jsonify, make_response
 
-from db import db
+from db import get_db_connection
 
 ticketf_routes = Blueprint('ticketf_routes', __name__)
 
 @ticketf_routes.route('/ticketf', methods=['GET'])
 @ticketf_routes.route('/ticketf/<string:hostnameF>', methods=['GET'])
 def get_hostnameF(hostnameF=None):
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     if hostnameF:
         cursor.execute("SELECT * FROM ticketf WHERE hostnameF = %s", (hostnameF,))
     else:
@@ -33,11 +34,12 @@ def add_ticketf():
     except KeyError as e:
         return make_response(jsonify({"Error": f"Campo mancante: {str(e)}"}), 400)
 
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     sql = """INSERT INTO ticketf (descrizione, dataOra, creatore, hostnameF, tecnico, stato)
              VALUES (%s, %s, %s, %s, %s, %s)"""
     cursor.execute(sql, (descrizione, dataOra, creatore, hostnameF, tecnico, stato))
-    db.commit()
+    conn.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "risorsa non inserita"}), 403)
@@ -56,9 +58,10 @@ def update_descrizione(id):
     except KeyError:
         return make_response(jsonify({"Error": "Campo 'descrizione' mancante"}), 400)
 
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute("UPDATE ticketf SET descrizione = %s WHERE id = %s", (descrizione, id))
-    db.commit()
+    conn.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "Ticket non trovato o descrizione non modificata"}), 404)
@@ -75,7 +78,8 @@ def update_tecnico(id):
     tecnico_email = data["tecnico"]
 
     # Opzionale: Verifica che il tecnico esista ed è autorizzato
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute("SELECT * FROM utenti WHERE name_mail = %s AND autorizzato = 1", (tecnico_email,))
     tecnico = cursor.fetchone()
 
@@ -84,7 +88,7 @@ def update_tecnico(id):
 
     # Aggiorna il tecnico nel ticket
     cursor.execute("UPDATE ticketf SET tecnico = %s WHERE IdTicket = %s", (tecnico_email, id))
-    db.commit()
+    conn.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "Ticket non trovato o tecnico non modificato"}), 404)
@@ -100,9 +104,10 @@ def update_stato(id):
     except KeyError:
         return make_response(jsonify({"Error": "Campo 'stato' mancante"}), 400)
 
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute("UPDATE ticketf SET stato = %s WHERE IdTicket = %s", (stato, id))
-    db.commit()
+    conn.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "Ticket non trovato o stato non modificato"}), 404)

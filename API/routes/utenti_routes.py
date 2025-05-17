@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response
 
-from db import db
+from db import get_db_connection
 
 utenti_routes = Blueprint('utenti_routes', __name__)
 
@@ -9,13 +9,15 @@ utenti_routes = Blueprint('utenti_routes', __name__)
 @utenti_routes.route('/utenti', methods=['GET'])
 def get_utenti():
     #creazione cursor per la gestione delle query
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute("SELECT * FROM utenti")
     return jsonify(cursor.fetchall()), 200
 
 @utenti_routes.route('/tecnici', methods=['GET'])
 def get_tecnici():
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute("SELECT name_mail FROM utenti WHERE autorizzato = 1")
     return jsonify(cursor.fetchall()), 200
 #-----------------------------------------------------
@@ -30,10 +32,11 @@ def add_utente():
     except KeyError as e:
         return make_response(jsonify({"Error": f"Campo mancante: {str(e)}"}), 400)
 
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute("INSERT INTO utenti (name_mail, password, autorizzato) VALUES (%s, %s, %s)",
                    (name_mail, password, autorizzato))
-    db.commit()
+    conn.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "risorsa non inserita"}), 403)
@@ -52,9 +55,10 @@ def update_password(id):
     except KeyError:
         return make_response(jsonify({"Error": "Campo 'password' mancante"}), 400)
 
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute("UPDATE utenti SET password = %s WHERE id = %s", (password, id))
-    db.commit()
+    conn.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "Utente non trovato o password non modificata"}), 404)
@@ -69,9 +73,10 @@ def update_name_mail(id):
     except KeyError:
         return make_response(jsonify({"Error": "Campo 'password' mancante"}), 400)
 
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute("UPDATE utenti SET name_mail = %s WHERE id = %s", (name_mail, id))
-    db.commit()
+    conn.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "Utente non trovato o password non modificata"}), 404)

@@ -1,13 +1,14 @@
 from flask import Blueprint, request, jsonify, make_response
 
-from db import db
+from db import get_db_connection
 
 fissi_routes = Blueprint('fissi_routes', __name__)
 
 @fissi_routes.route('/fissi', methods=['GET'])
 @fissi_routes.route('/fissi/<int:Aula>', methods=['GET'])
 def get_fissi(Aula=None):
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     if Aula:
         cursor.execute("SELECT * FROM fissi WHERE Aula = %s", (Aula,))
     else:
@@ -29,9 +30,10 @@ def add_fisso():
     except KeyError as e:
         return make_response(jsonify({"Error": f"Campo mancante: {str(e)}"}), 400)
 
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute("INSERT INTO fissi (HostName, Aula) VALUES (%s, %s)", (HostName, Aula))
-    db.commit()
+    conn.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "risorsa non inserita"}), 403)

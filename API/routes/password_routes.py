@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, make_response
-from db import db
+from db import get_db_connection
 import random
 import string
 from datetime import datetime, timedelta
@@ -21,7 +21,9 @@ def validate_input(data):
 
 def check_user_existence(name_mail):
     """Check if the user exists in the database and return the user ID."""
-    cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
+    conn = get_db_connection()
+    
+    cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
     cursor.execute("SELECT id FROM utenti WHERE name_mail = %s", (name_mail,))
     user = cursor.fetchone()
 
@@ -41,12 +43,13 @@ def generate_random_token(length=12):
 
 def insert_token_into_db(token_number, user_id, expiration_date):
     """Insert the token into the database."""
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO token (token_number, user_id, expiration_date) VALUES (%s, %s, %s)",
         (token_number, user_id, expiration_date)
     )
-    db.commit()
+    conn.commit()
 
     if cursor.rowcount == 0:
         raise RuntimeError("Errore durante la generazione del token")
@@ -109,7 +112,9 @@ def change_password():
         if not token_number or not new_password:
             return make_response(jsonify({"Error": "Token e nuova password sono obbligatori"}), 400)
 
-        cursor = db.cursor(cursor=pymysql.cursors.DictCursor)
+        conn = get_db_connection()
+
+        cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
         cursor.execute(
             "SELECT user_id, expiration_date FROM token WHERE token_number = %s",
             (token_number,)
@@ -128,7 +133,7 @@ def change_password():
             "UPDATE utenti SET password = %s WHERE id = %s",
             (new_password, user_id)
         )
-        db.commit()
+        conn.commit()
 
         if cursor.rowcount == 0:
             return make_response(jsonify({"Error": "Errore durante l'aggiornamento della password"}), 403)

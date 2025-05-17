@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response
 
-from db import db
+from db import get_db_connection
 
 portatili_routes = Blueprint('portatili_routes', __name__)
 
@@ -9,7 +9,8 @@ portatili_routes = Blueprint('portatili_routes', __name__)
 @portatili_routes.route('/portatili', methods=['GET'])
 @portatili_routes.route('/portatili/<string:codBox>', methods=['GET'])
 def get_portatili(codBox=None):
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     if codBox:
         cursor.execute("SELECT * FROM portatili WHERE codBox = %s", (codBox,))
     else:
@@ -31,9 +32,10 @@ def add_portatile():
     except KeyError as e:
         return make_response(jsonify({"Error": f"Campo mancante: {str(e)}"}), 400)
 
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute("INSERT INTO portatili (hostname, codBox) VALUES (%s, %s)", (hostname, codBox))
-    db.commit()
+    conn.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "risorsa non inserita"}), 403)

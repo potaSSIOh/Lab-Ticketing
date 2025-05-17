@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response
 
-from db import db
+from db import get_db_connection
 box_routes = Blueprint('box_routes', __name__)
 
 
@@ -10,7 +10,8 @@ box_routes = Blueprint('box_routes', __name__)
 @box_routes.route('/box', methods=['GET'])
 
 def get_box():
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     cursor.execute("SELECT * FROM box")
     return jsonify(cursor.fetchall()), 200
 
@@ -24,10 +25,11 @@ def add_box():
     except KeyError as e:
         return make_response(jsonify({"Error": f"Campo mancante: {str(e)}"}), 400)
 
-    cursor = db.cursor()
+    conn = get_db_connection()
+    cursor = conn.cursor()
     sql = "INSERT INTO box (codBox) VALUES (%s)"
     cursor.execute(sql, (codBox,))
-    db.commit()
+    conn.commit()
 
     if cursor.rowcount == 0:
         return make_response(jsonify({"Error": "risorsa non inserita"}), 403)
