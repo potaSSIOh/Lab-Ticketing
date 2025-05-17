@@ -57,7 +57,7 @@ button:hover {
             --border-td: #ddd;
         }
         th{
-            color: red;
+            color: #3a7bc8;
             padding: 12px; /* Spaziatura interna per ogni cella */
         }
 
