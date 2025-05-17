@@ -73,6 +73,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem("token");
     const autorizzato = localStorage.getItem("autorizzato") === "1";
+    console.log(localStorage.getItem("autorizzato"));
     const hostname = localStorage.getItem("selectedPc");
     const utenteCorrente = localStorage.getItem("utenteCorrente");
     const pcType = localStorage.getItem("PcType");

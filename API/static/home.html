@@ -370,7 +370,9 @@
                     // Decodifica il token JWT
                     const decoded = jwt_decode(token);
                     const userId = decoded.user_id; // Ottieni user_id dai claims
+                    const autorizzato = decoded.autorizzato
                     localStorage.setItem("User", userId);
+                    localStorage.setItem("autorizzato", autorizzato);
                     // Ottieni l'email dal campo "sub" (identity=email nel backend)
                     const userEmail = decoded.sub;
 

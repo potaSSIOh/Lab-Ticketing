@@ -21,8 +21,9 @@ def login():
     if user:
         #usata per controllare se accedi con il boss o no per la creazione degli utenti
         user_id = user['id']  # Accedi tramite la chiave 'id' del dizionario
+        autorizzato = user['autorizzato']
         #creazione token per l'accesso
-        access_token = create_access_token(identity=email, additional_claims={"user_id": user_id}, expires_delta=timedelta(hours=1))
+        access_token = create_access_token(identity=email, additional_claims={"user_id": user_id, "autorizzato": autorizzato}, expires_delta=timedelta(hours=1))
         return jsonify({
             "status": "success",
             "message": f"Welcome {email}",
@@ -34,12 +35,12 @@ def login():
 def check_user(name_mail, password):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, name_mail, password FROM utenti WHERE name_mail=%s", (name_mail,))
+    cursor.execute("SELECT id, name_mail, password, autorizzato FROM utenti WHERE name_mail=%s", (name_mail,))
     user = cursor.fetchone()
     cursor.close()
 
     if user:
         # Confronta la password 
         if user['password'] == password: 
-            return {'id': user['id'], 'name_mail': user['name_mail']}
+            return {'id': user['id'], 'name_mail': user['name_mail'], 'autorizzato': user['autorizzato']}
     return None
