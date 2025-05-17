@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Versione server:              10.4.28-MariaDB - mariadb.org binary distribution
+-- Versione server:              10.4.32-MariaDB - mariadb.org binary distribution
 -- S.O. server:                  Win64
--- HeidiSQL Versione:            12.5.0.6677
+-- HeidiSQL Versione:            12.8.0.6908
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `aule` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Dump dei dati della tabella labticketing.aule: ~3 rows (circa)
-REPLACE INTO `aule` (`nAula`, `Lab`) VALUES
+INSERT INTO `aule` (`nAula`, `Lab`) VALUES
 	(147, 1),
 	(247, 1),
 	(347, 1);
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `box` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Dump dei dati della tabella labticketing.box: ~2 rows (circa)
-REPLACE INTO `box` (`codBox`) VALUES
+INSERT INTO `box` (`codBox`) VALUES
 	('1'),
 	('2');
 
@@ -52,11 +52,16 @@ CREATE TABLE IF NOT EXISTS `fissi` (
   CONSTRAINT `fissi_ibfk_1` FOREIGN KEY (`Aula`) REFERENCES `aule` (`nAula`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dump dei dati della tabella labticketing.fissi: ~4 rows (circa)
-REPLACE INTO `fissi` (`HostName`, `Aula`) VALUES
+-- Dump dei dati della tabella labticketing.fissi: ~9 rows (circa)
+INSERT INTO `fissi` (`HostName`, `Aula`) VALUES
 	('W10STAT-7-146', 247),
+	('W10STAT-7-157', 247),
+	('W10STAT-7-159', 247),
+	('W10STAT-7-160', 247),
+	('W10STAT-7-161', 247),
 	('W10STAT-7-162', 247),
 	('W10STAT-7-163', 247),
+	('W10STAT-7-164', 247),
 	('W10STAT-7-234', 347);
 
 -- Dump della struttura di tabella labticketing.portatili
@@ -69,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `portatili` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- Dump dei dati della tabella labticketing.portatili: ~2 rows (circa)
-REPLACE INTO `portatili` (`hostname`, `codBox`) VALUES
+INSERT INTO `portatili` (`hostname`, `codBox`) VALUES
 	('233', '1'),
 	('332', '2');
 
@@ -78,45 +83,46 @@ CREATE TABLE IF NOT EXISTS `ticketf` (
   `IdTicket` int(11) NOT NULL AUTO_INCREMENT,
   `descrizione` varchar(50) NOT NULL,
   `dataOra` datetime NOT NULL DEFAULT current_timestamp(),
-  `creatore` int(4) NOT NULL,
+  `creatore` varchar(50) NOT NULL DEFAULT '',
   `hostnameF` varchar(40) DEFAULT NULL,
-  `tecnico` int(11) DEFAULT NULL,
+  `tecnico` varchar(50) DEFAULT NULL,
   `stato` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`IdTicket`),
-  KEY `creatore` (`creatore`),
   KEY `hostnameF` (`hostnameF`),
+  KEY `creatore` (`creatore`),
   KEY `tecnico` (`tecnico`),
-  CONSTRAINT `ticketf_ibfk_1` FOREIGN KEY (`creatore`) REFERENCES `utenti` (`id`),
-  CONSTRAINT `ticketf_ibfk_2` FOREIGN KEY (`hostnameF`) REFERENCES `fissi` (`HostName`),
-  CONSTRAINT `ticketf_ibfk_4` FOREIGN KEY (`tecnico`) REFERENCES `utenti` (`id`),
+  CONSTRAINT `FK_ticketf_fissi` FOREIGN KEY (`hostnameF`) REFERENCES `fissi` (`HostName`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK_ticketf_utenti` FOREIGN KEY (`creatore`) REFERENCES `utenti` (`name_mail`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK_ticketf_utenti_2` FOREIGN KEY (`tecnico`) REFERENCES `utenti` (`name_mail`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `check_stato` CHECK (`stato` in ('In lavorazione','Chiuso','Aperto'))
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dump dei dati della tabella labticketing.ticketf: ~1 rows (circa)
-REPLACE INTO `ticketf` (`IdTicket`, `descrizione`, `dataOra`, `creatore`, `hostnameF`, `tecnico`, `stato`) VALUES
-	(2, 'non funzion', '2025-05-14 12:37:12', 1, 'W10STAT-7-146', 1, 'Aperto');
+-- Dump dei dati della tabella labticketing.ticketf: ~0 rows (circa)
+INSERT INTO `ticketf` (`IdTicket`, `descrizione`, `dataOra`, `creatore`, `hostnameF`, `tecnico`, `stato`) VALUES
+	(3, 'prova', '2025-05-17 12:33:09', 'IlBoss', 'W10STAT-7-146', NULL, 'Aperto'),
+	(4, 'qweqe', '2025-05-17 12:33:15', 'IlBoss', 'W10STAT-7-146', NULL, 'Aperto'),
+	(5, '123', '2025-05-17 12:35:26', 'lorenzo2', 'W10STAT-7-146', NULL, 'Aperto'),
+	(6, 'asda', '2025-05-17 12:57:04', 'lorenzo', 'W10STAT-7-146', NULL, 'Aperto');
 
 -- Dump della struttura di tabella labticketing.ticketp
 CREATE TABLE IF NOT EXISTS `ticketp` (
   `IdTicket` int(11) NOT NULL AUTO_INCREMENT,
   `descrizione` varchar(50) NOT NULL,
   `dataOra` datetime NOT NULL DEFAULT current_timestamp(),
-  `creatore` int(4) NOT NULL,
+  `creatore` varchar(50) NOT NULL DEFAULT '',
   `hostnameP` varchar(40) DEFAULT NULL,
-  `tecnico` int(11) DEFAULT NULL,
+  `tecnico` varchar(50) DEFAULT NULL,
   `stato` varchar(14) DEFAULT NULL,
   PRIMARY KEY (`IdTicket`) USING BTREE,
-  KEY `creatore` (`creatore`) USING BTREE,
   KEY `hostnameP` (`hostnameP`) USING BTREE,
-  KEY `tecnico` (`tecnico`) USING BTREE,
-  CONSTRAINT `ticketp_ibfk_1` FOREIGN KEY (`creatore`) REFERENCES `utenti` (`id`),
-  CONSTRAINT `ticketp_ibfk_3` FOREIGN KEY (`hostnameP`) REFERENCES `portatili` (`hostname`),
-  CONSTRAINT `ticketp_ibfk_4` FOREIGN KEY (`tecnico`) REFERENCES `utenti` (`id`)
+  KEY `creatore` (`creatore`),
+  KEY `tecnico` (`tecnico`),
+  CONSTRAINT `FK_ticketp_utenti` FOREIGN KEY (`creatore`) REFERENCES `utenti` (`name_mail`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK_ticketp_utenti_2` FOREIGN KEY (`tecnico`) REFERENCES `utenti` (`name_mail`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `ticketp_ibfk_3` FOREIGN KEY (`hostnameP`) REFERENCES `portatili` (`hostname`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
 
--- Dump dei dati della tabella labticketing.ticketp: ~1 rows (circa)
-REPLACE INTO `ticketp` (`IdTicket`, `descrizione`, `dataOra`, `creatore`, `hostnameP`, `tecnico`, `stato`) VALUES
-	(2, 'non funzion', '2025-05-14 12:36:42', 1, '233', 1, 'Aperto');
+-- Dump dei dati della tabella labticketing.ticketp: ~0 rows (circa)
 
 -- Dump della struttura di tabella labticketing.token
 CREATE TABLE IF NOT EXISTS `token` (
@@ -138,11 +144,14 @@ CREATE TABLE IF NOT EXISTS `utenti` (
   `autorizzato` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_mail` (`name_mail`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dump dei dati della tabella labticketing.utenti: ~1 rows (circa)
-REPLACE INTO `utenti` (`id`, `name_mail`, `password`, `autorizzato`) VALUES
-	(1, 'ilBoss', '123', 1);
+-- Dump dei dati della tabella labticketing.utenti: ~4 rows (circa)
+INSERT INTO `utenti` (`id`, `name_mail`, `password`, `autorizzato`) VALUES
+	(1, 'ilBoss', '123', 1),
+	(2, '19385@studenti.marconiverona.edu.it', '1233', 1),
+	(3, 'lorenzo', '123', 0),
+	(5, 'lorenzo2', '123', 1);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
