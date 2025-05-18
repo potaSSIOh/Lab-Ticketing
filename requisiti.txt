@@ -53,6 +53,3 @@ Attualmente, la gestione delle segnalazioni avviene manualmente, rendendo diffic
 7. Allegati e Riferimenti
 
 - Diagrammi delle entità del database
-
-8. Librerie Necessarie
-- Flask: pip install flask; Flask-CORS: pip install flask-cors; Flask-JWT-Extended: pip install flask-jwt-extended
