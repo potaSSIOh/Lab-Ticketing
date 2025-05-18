@@ -8,7 +8,6 @@ h1 {
     color: red;
 }
 
-
 input {
     margin: 10px 0;
     padding: 10px;
@@ -25,6 +24,12 @@ button {
     cursor: pointer; 
     transition: background 0.3s ease;
 }
+td{
+    cursor: pointer;
+    
+}
+
+
 
 button:hover {
     background-color: #003b4b;
@@ -32,19 +37,36 @@ button:hover {
 
 /*Light Mode*/
         body {
-            --bg: rgba(255, 255, 255, 0.2);
+
+            --bg: rgb(241, 241, 241);
             --text-color: black;
             background-color: var(--bg);
             color: var(--text-color);
             transition: background-color 0.3s, color 0.3s;
+            --bg-td: #e0e0e0a6;
+            --text-td: black;
+            --border-td: black;
         }
 
         /* Dark Mode */
         .dark-mode {
             --bg: #1e2a38; 
             --text-color: #e0e0e0;
+            --bg-td: #161f29;
+            --text-td: white;
+            --border-td: #ddd;
+        }
+        th{
+            color: #3a7bc8;
+            padding: 12px; /* Spaziatura interna per ogni cella */
         }
 
+        td{
+            background-color: var(--bg-td); 
+            color: var(--text-td);
+            padding: 12px; /* Spaziatura interna per ogni cella */
+            border: 10px solid var(--border-td); /* Bordo sottile e chiaro per ogni cella */
+        }
         .theme {
             display: flex;
             align-items: center;
@@ -84,3 +106,43 @@ button:hover {
             background-color: hsl(198, 90%, 65%);
             transform: translateX(30px);
         }
+        /* Stile della modale */
+        .modale {
+            display: none; 
+            position: fixed;
+
+            left: 0;
+            top: 0;
+            width: 600px;
+            height: 600px;
+            overflow: auto;
+          }
+      
+          .modale-content {
+            background-color: #fefefe;
+            color: black;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s;
+          }
+      
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+      
+          .close {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+          }
+      
+          .close:hover {
+            color: black;
+          }

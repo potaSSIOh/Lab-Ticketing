@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizza Ticket</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --background-light: #f8f9fa;
+            --text-dark: #212529;
+            --text-light: #f8f9fa;
+            --border-color: #dee2e6;
+            --hover-color: #e9ecef;
+            --success-color: #4cc9f0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+            body.dark-mode select,
+            body.dark-mode input {
+                background-color: #1e1e1e;
+                color: var(--text-dark);
+                border-color: var(--border-color);
+            }
+
+            body.dark-mode select option {
+                background-color: #1e1e1e;
+                color: var(--text-dark);
+            }
+
+        body.dark-mode {
+            --background-light: #121212;
+            --text-dark: #f8f9fa;
+            --text-light: #212529;
+            --border-color: #333;
+            --hover-color: #222;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .dropdown-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 20px;
+        }
+
+        h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #ff4d6d;
+        }
+
+        select, input {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: transparent;
+            color: var(--text-dark);
+            transition: all 0.2s ease;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        }
+
+        #ticketContainer {
+            width: 100%;
+            max-width: 1200px;
+            overflow-x: auto;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        #ticketTable {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: transparent;
+        }
+
+        #ticketTable thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        #ticketTable th {
+            padding: 12px 15px;
+            color: white;
+            text-align: left;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        #ticketTable td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        #ticketTable tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        #ticketTable tbody tr:hover {
+            background-color: var(--hover-color);
+        }
+
+        #ticketTable tbody tr:hover td {
+            color: var(--primary-color);
+        }
+
+        .theme__toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 26px;
+            background-color: var(--border-color);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .theme__toggle.checked {
+            background-color: var(--primary-color);
+        }
+
+        .theme__toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .theme__toggle.checked::after {
+            transform: translateX(24px);
+        }
+    </style>
+</head>
+<body>
+
+<script>
+</script>
+
+<label class="theme">
+    <div id="themeToggle" class="theme__toggle"></div>
+</label>
+<h1 id="hostnameTitle"></h1>
+
+<div id="ticketContainer">
+    <table id="ticketTable">
+        <thead>
+            <tr>
+                <th>ID Ticket</th>
+                <th>Descrizione</th>
+                <th>Data/Ora</th>
+                <th>Creatore</th>
+                <th>Hostname</th>
+                <th>Tecnico</th>
+                <th>Stato</th>
+            </tr>
+        </thead>
+        <tbody id="ticketBody"></tbody>
+    </table>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    const token = localStorage.getItem("token");
+    const autorizzato = localStorage.getItem("autorizzato") === "1";
+    console.log(localStorage.getItem("autorizzato"));
+    const hostname = localStorage.getItem("selectedPc");
+    const utenteCorrente = localStorage.getItem("utenteCorrente");
+    const pcType = localStorage.getItem("PcType");
+
+    if (!token) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    const toggle = document.getElementById("themeToggle");
+    const body = document.body;
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "dark") {
+        body.classList.add("dark-mode");
+        toggle.classList.add("checked");
+    }
+
+    toggle.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+        toggle.classList.toggle("checked");
+        localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+    });
+
+    document.getElementById("hostnameTitle").textContent = hostname
+        ? `Hostname: ${hostname}`
+        : "Hostname non trovato";
+
+    try {
+        let apiUrl = "";
+        if (pcType === "Box") {
+            apiUrl = "http://127.0.0.1:5000/ticketp";
+        } else if (pcType === "Aule") {
+            apiUrl = "http://127.0.0.1:5000/ticketf";
+        } else {
+            console.error("Tipo di PC non valido.");
+            return;
+        }
+
+        const [ticketRes, tecniciRes] = await Promise.all([
+            fetch(apiUrl),
+            fetch("http://127.0.0.1:5000/utenti")
+        ]);
+
+        if (!ticketRes.ok || !tecniciRes.ok) throw new Error("Errore nelle fetch");
+
+        const tickets = await ticketRes.json();
+        const tecniciAll = await tecniciRes.json();
+        const tecnici = tecniciAll.filter(t => t.autorizzato === 1);
+
+        const filteredTickets = tickets.filter(ticket =>
+            ticket.hostnameF === hostname || ticket.hostnameP === hostname
+        );
+
+        const ticketBody = document.getElementById("ticketBody");
+        ticketBody.innerHTML = ""; // Clear old rows
+
+        filteredTickets.forEach(ticket => {
+            const tr = document.createElement("tr");
+            const id = ticket.IdTicket;
+            const hostnameDisplay = ticket.hostnameF || ticket.hostnameP;
+
+            tr.innerHTML = `
+                <td>${id}</td>
+                <td>
+                    ${ticket.creatore === utenteCorrente ? `
+                        <input type="text" value="${ticket.descrizione}" onchange="updateTicket(${id}, 'descrizione', this.value)">
+                    ` : `<input type="text" value="${ticket.descrizione}" disabled>`}
+                </td>
+                <td>${ticket.dataOra}</td>
+                <td>${ticket.creatore}</td>
+                <td>${hostnameDisplay}</td>
+                <td>
+                    ${autorizzato ? `
+                        <select onchange="updateTicket(${id}, 'tecnico', this.value)">
+                            <option value=""></option>
+                            ${tecnici.map(tech => `
+                                <option value="${tech.name_mail}" ${tech.name_mail === ticket.tecnico ? "selected" : ""}>${tech.name_mail}</option>
+                            `).join('')}
+                        </select>
+                    ` : ticket.tecnico}
+                </td>
+                <td>
+                    ${autorizzato ? `
+                        <select onchange="updateTicket(${id}, 'stato', this.value)">
+                            <option value="Aperto" ${ticket.stato === "Aperto" ? "selected" : ""}>Aperto</option>
+                            <option value="In lavorazione" ${ticket.stato === "In lavorazione" ? "selected" : ""}>In lavorazione</option>
+                            <option value="Chiuso" ${ticket.stato === "Chiuso" ? "selected" : ""}>Chiuso</option>
+                        </select>
+                    ` : ticket.stato}
+                </td>
+            `;
+            ticketBody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error("Errore nel caricamento dei ticket:", err);
+    }
+});
+
+// Global update function
+async function updateTicket(idTicket, field, value) {
+    const token = localStorage.getItem("token");
+    const pcType = localStorage.getItem("PcType");
+
+    let updateUrl = "";
+    if (field === "tecnico" || field === "stato" || field === "descrizione") {
+        const endpoint = field === "descrizione" ? "" : `/${field}`;
+        updateUrl = pcType === "Box"
+            ? `http://127.0.0.1:5000/ticketp/${idTicket}${endpoint}`
+            : `http://127.0.0.1:5000/ticketf/${idTicket}${endpoint}`;
+    }
+
+    try {
+        const res = await fetch(updateUrl, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ [field]: value })
+        });
+
+        if (!res.ok) throw new Error(`Errore aggiornamento ticket ${idTicket}`);
+        console.log(`Ticket ${idTicket} aggiornato con ${field}: ${value}`);
+    } catch (error) {
+        console.error(error);
+    }
+}
+</script>
+
+</body>
+</html>

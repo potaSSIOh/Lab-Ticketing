@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inserisci Ticket</title>
+  <link rel="stylesheet" href="/static/styles/style.css">
+  <style>
+      body {
+          font-family: 'Arial', sans-serif;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start; /* Cambiato da center a flex-start */
+          min-height: 100vh;
+          margin: 0;
+          padding-top: 40px; /* Aggiunto padding superiore */
+          background-color: #f5f5f5;
+          color: #333;
+          line-height: 1.6;
+      }
+
+      body.dark-mode {
+          background-color: #222;
+          color: #f0f0f0;
+      }
+
+      h1 {
+          color: #2c3e50;
+          margin-bottom: 15px; /* Ridotto da 30px a 15px */
+          text-align: center;
+      }
+
+      .dark-mode h1 {
+          color: #ecf0f1;
+      }
+
+      form {
+          padding: 25px;
+          border-radius: 8px;
+          display: flex;
+          flex-direction: column;
+          width: 350px;
+          background: white;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          margin-top: 20px; /* Aggiunto margine superiore */
+      }
+
+      .dark-mode form {
+          background: #333;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      label {
+          margin-bottom: 8px;
+          font-weight: 600;
+          color: #2c3e50;
+      }
+
+      .dark-mode label {
+          color: #ecf0f1;
+      }
+
+      textarea, input, select {
+          padding: 10px;
+          margin-bottom: 20px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 14px;
+      }
+
+      .dark-mode textarea,
+      .dark-mode input,
+      .dark-mode select {
+          background: #444;
+          border-color: #555;
+          color: #f0f0f0;
+      }
+
+      textarea {
+          min-height: 100px;
+          resize: vertical;
+      }
+
+      button {
+          margin-top: 15px;
+          padding: 12px;
+          background-color: #3498db;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-weight: 600;
+          transition: background-color 0.3s;
+      }
+
+      button:hover {
+          background-color: #2980b9;
+      }
+
+      .dark-mode button {
+          background-color: #2980b9;
+      }
+
+      .dark-mode button:hover {
+          background-color: #3498db;
+      }
+
+      #stato {
+          margin-bottom: 20px; 
+      }
+
+      .theme {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+      }
+  </style>
+</head>
+<body>
+
+  <h1>Inserisci Ticket</h1>
+  <label class="theme">
+    <div id="themeToggle" class="theme__toggle"></div>
+  </label>
+  <form id="ticketForm">
+    <label for="descrizione">Descrizione:</label>
+    <textarea id="descrizione" name="descrizione" required></textarea>
+
+    <label id="hostnameLabel" for="hostname">Hostname:</label>
+    <input type="text" id="hostname" name="hostname" readonly />
+
+    <label for="stato">Stato:</label>
+    <select id="stato" name="stato" required>
+      <option value="Aperto">Aperto</option>
+      <option value="In lavorazione">In lavorazione</option>
+      <option value="Chiuso">Chiuso</option>
+    </select>
+    
+    <button type="submit">Invia Ticket</button>
+  </form>
+
+  <script>
+    // gestione del tema
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggle = document.getElementById("themeToggle");
+      const body = document.body;
+      const savedTheme = localStorage.getItem("theme");
+
+      if (savedTheme === "dark") {
+        body.classList.add("dark-mode");
+        toggle.classList.add("checked");
+      }
+
+      toggle.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+        toggle.classList.toggle("checked");
+        localStorage.setItem("theme", body.classList.contains("dark-mode") ? "dark" : "light");
+      });
+    });
+
+    window.onload = () => {
+      const pcType = localStorage.getItem("PcType");
+      const hostname = localStorage.getItem("selectedPc");
+
+      const hostnameLabel = document.getElementById("hostnameLabel");
+      const hostnameInput = document.getElementById("hostname");
+
+      if (pcType === "Box") {
+        hostnameLabel.textContent = "HostnameP:";
+        hostnameInput.name = "hostnameP";
+      } else {
+        hostnameLabel.textContent = "HostnameF:";
+        hostnameInput.name = "hostnameF";
+      }
+
+      hostnameInput.value = hostname || "";
+    };
+
+    document.getElementById("ticketForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const pcType = localStorage.getItem("PcType");
+      const selectedPc = localStorage.getItem("selectedPc");
+      const UserMail = localStorage.getItem("UserEmail");
+      const user = localStorage.getItem("User");
+
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      data.dataOra = new Date().toISOString(); // Format ISO
+      data.creatore = UserMail; // Prelevato da localStorage
+      data.tecnico = null; // Tecnico non viene chiesto ora
+
+      if (pcType === "Box") {
+        data.hostnameP = selectedPc;
+        delete data.hostnameF;
+      } else {
+        data.hostnameF = selectedPc;
+        delete data.hostnameP;
+      }
+
+      const endpoint =
+        pcType === "Box"
+          ? "http://localhost:5000/ticketp"
+          : "http://localhost:5000/ticketf";
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.status === 201) {
+          alert("Ticket inserito con successo!");
+        } else {
+          const error = await response.json();
+          alert("Errore: " + (error?.Error || "Errore generico"));
+        }
+      } catch (err) {
+        console.error("Errore nella richiesta:", err);
+        alert("Errore di rete durante l'invio.");
+      }
+    });
+  </script>
+</body>
+</html>
