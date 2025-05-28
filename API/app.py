@@ -12,6 +12,7 @@ from flask_jwt_extended import JWTManager
 from routes.password_routes import password_routes
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
+
 app = Flask(__name__, static_folder='static')
 app.config["JWT_SECRET_KEY"] = "f>NY.RzV:no8j17kZg!K0AlFv.q>mpcZB6=~J$a>G8l1<>lrAW?KP{-+!(ORX@" #chiave per JWT
 jwt = JWTManager(app)
