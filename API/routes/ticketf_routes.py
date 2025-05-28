@@ -60,7 +60,7 @@ def update_descrizione(id):
 
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("UPDATE ticketf SET descrizione = %s WHERE id = %s", (descrizione, id))
+    cursor.execute("UPDATE ticketf SET descrizione = %s WHERE IdTicket = %s", (descrizione, id))
     conn.commit()
 
     if cursor.rowcount == 0:
