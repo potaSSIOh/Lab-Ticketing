@@ -3,6 +3,8 @@ import os
 import pytest
 import uuid
 
+# python -m pytest .\API\tests\test_routes.py   |||||||    pytest .\API\tests\test_routes.py
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 from API.app import app
