@@ -77,7 +77,7 @@ def update_tecnico(id):
 
     tecnico_email = data["tecnico"]
 
-    # Opzionale: Verifica che il tecnico esista ed è autorizzato
+    # Verifica che il tecnico esista ed è autorizzato
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM utenti WHERE name_mail = %s AND autorizzato = 1", (tecnico_email,))

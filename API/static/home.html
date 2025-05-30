@@ -453,7 +453,7 @@
 
         // Carico i dati(Aule o Box)
         async function loadDetails(type, value) {
-            const url = `http://localhost:5000/${type === 'Aule' ? 'fissi' : 'portatili'}/${value}`;
+            const url = `http://127.0.0.1:5000/${type === 'Aule' ? 'fissi' : 'portatili'}/${value}`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
@@ -564,8 +564,8 @@
                 }
             };
 
-            fetchData('http://localhost:5000/aule', 'AuleList');
-            fetchData('http://localhost:5000/box', 'BoxList');
+            fetchData('http://127.0.0.1:5000/aule', 'AuleList');
+            fetchData('http://127.0.0.1:5000/box', 'BoxList');
         }
 
         initializeData();

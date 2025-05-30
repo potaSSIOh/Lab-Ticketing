@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+#from flask_cors import CORS
 from routes.aule_routes import aule_routes
 from routes.box_routes import box_routes
 from routes.fissi_routes import fissi_routes
@@ -19,7 +19,7 @@ jwt = JWTManager(app)
 
 # NON CHIAMARE LA PAGINA CON LOCALHOST:5000 MA CON 127.0.0.1:5000
 # Enable CORS for all routes, allowing localhost:5000 and 127.0.0.1:5000
-CORS(app, resources={r"/*": {"origins": ["http://localhost:5000", "http://127.0.0.1:5000"]}})
+#CORS(app, resources={r"/*": {"origins": ["http://localhost:5000", "http://127.0.0.1:5000"]}})
 
 
 @app.route('/protected', methods=['GET'])
@@ -33,7 +33,7 @@ def protected():
 def serve_index():
     return app.send_static_file('index.html')
 
-# Register blueprints (API)
+# Register blueprints
 app.register_blueprint(aule_routes)
 app.register_blueprint(box_routes)
 app.register_blueprint(fissi_routes)

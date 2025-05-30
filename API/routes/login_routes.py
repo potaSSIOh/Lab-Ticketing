@@ -7,7 +7,7 @@ from db import get_db_connection
 login_routes = Blueprint('login_routes', __name__)
 
 @login_routes.route('/login', methods=['POST'])
-@cross_origin(origins="http://127.0.0.1:5000")
+#@cross_origin(origins="http://127.0.0.1:5000")
 def login():
     data = request.json
     email = data.get("name_mail")
@@ -19,7 +19,7 @@ def login():
     user = check_user(email, password)
 
     if user:
-        #usata per controllare se accedi con il boss o no per la creazione degli utenti
+        #usata per controllare se accedi con ilboss o no per la creazione degli utenti
         user_id = user['id']  # Accedi tramite la chiave 'id' del dizionario
         autorizzato = user['autorizzato']
         #creazione token per l'accesso
